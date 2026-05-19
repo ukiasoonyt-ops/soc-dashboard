@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOFC/SOEC Global Tech Tracker</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #fbfbfd;
+  --text: #1d1d1f;
+  --text-muted: #6e6e73;
+  --accent: #0071e3;
+  --border: #d2d2d7;
+  --card: #ffffff;
+  --green: #34c759;
+  --orange: #ff9500;
+  --red: #ff3b30;
+  --purple: #af52de;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Navigation */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(251, 251, 253, 0.8);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+}
+nav .inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+nav .logo { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+nav .links { display: flex; gap: 32px; }
+nav .links a { color: var(--text); text-decoration: none; font-size: 14px; opacity: 0.8; transition: opacity 0.2s; }
+nav .links a:hover { opacity: 1; }
+
+/* Hero */
+.hero { text-align: center; padding: 100px 24px 80px; max-width: 1000px; margin: 0 auto; }
+.hero h1 {
+  font-size: clamp(48px, 7vw, 88px); font-weight: 700;
+  letter-spacing: -0.025em; line-height: 1.05; margin-bottom: 24px;
+}
+.hero h1 .gradient {
+  background: linear-gradient(135deg, #0071e3 0%, #af52de 50%, #ff3b30 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero .subtitle {
+  font-size: clamp(20px, 2vw, 28px); color: var(--text-muted);
+  font-weight: 400; letter-spacing: -0.01em; margin-bottom: 32px;
+}
+.hero .updated {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px; background: var(--card); border-radius: 980px;
+  font-size: 14px; color: var(--text-muted); border: 1px solid var(--border);
+}
+.hero .updated .dot {
+  width: 8px; height: 8px; background: var(--green); border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* Stats */
+.stats {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px 80px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;
+}
+.stat-card {
+  background: var(--card); padding: 32px 24px; border-radius: 18px;
+  text-align: center; border: 1px solid var(--border);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+.stat-card .num {
+  font-size: 56px; font-weight: 700; letter-spacing: -0.025em;
+  background: linear-gradient(135deg, #0071e3, #af52de);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.stat-card .label { font-size: 15px; color: var(--text-muted); margin-top: 4px; }
+
+/* Section Headers */
+.section-header { text-align: center; padding: 80px 24px 40px; }
+.section-header h2 {
+  font-size: clamp(36px, 5vw, 56px); font-weight: 700;
+  letter-spacing: -0.02em; margin-bottom: 16px;
+}
+.section-header p { font-size: 19px; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+
+/* ====== TOP RANKING SECTION ====== */
+.ranking-section {
+  background: linear-gradient(180deg, #fbfbfd 0%, #f5f5f7 100%);
+  padding: 60px 0 100px;
+}
+.ranking-list {
+  max-width: 1100px; margin: 0 auto; padding: 0 24px;
+  display: flex; flex-direction: column; gap: 24px;
+}
+.rank-card {
+  background: var(--card); border-radius: 22px; padding: 32px;
+  border: 1px solid var(--border);
+  display: grid; grid-template-columns: 80px 1fr 280px; gap: 32px;
+  align-items: center; position: relative;
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+}
+.rank-card[data-url] { cursor: pointer; }
+.rank-card[data-url]:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.08); border-color: var(--accent); }
+.rank-card[data-url]::after {
+  content: "↗"; position: absolute; top: 18px; right: 22px;
+  font-size: 16px; color: var(--text-muted); opacity: 0.4;
+  transition: opacity 0.25s, transform 0.25s, color 0.25s;
+}
+.rank-card[data-url]:hover::after { opacity: 1; color: var(--accent); transform: translate(2px, -2px); }
+.rank-num {
+  font-size: 72px; font-weight: 800; letter-spacing: -0.04em; line-height: 1;
+  background: linear-gradient(135deg, #0071e3, #af52de);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  text-align: center;
+}
+.rank-info h3 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 4px; }
+.rank-info .meta { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; }
+.rank-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px; }
+.metric { background: var(--bg); padding: 12px; border-radius: 12px; }
+.metric .m-key { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+.metric .m-val { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+.rank-info .desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+.rank-photo {
+  width: 100%; aspect-ratio: 4/3;
+  border-radius: 16px; overflow: hidden;
+  background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.rank-photo img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center;
+}
+.rank-photo .no-img {
+  font-size: 48px; opacity: 0.3;
+}
+.rank-photo .badge-overlay {
+  position: absolute; top: 12px; right: 12px;
+  background: rgba(0,0,0,0.7); color: #fff;
+  padding: 4px 10px; border-radius: 980px;
+  font-size: 11px; font-weight: 600;
+  backdrop-filter: blur(10px);
+}
+
+/* Region Tabs */
+.region-tabs {
+  position: sticky; top: 50px; z-index: 50;
+  background: rgba(251, 251, 253, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+}
+.tabs-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+}
+.tab-btn {
+  padding: 10px 24px; border-radius: 980px;
+  border: 1px solid var(--border); background: var(--card);
+  font-size: 15px; font-weight: 500; color: var(--text);
+  cursor: pointer; transition: all 0.2s; font-family: inherit;
+}
+.tab-btn:hover { border-color: var(--accent); color: var(--accent); }
+.tab-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+/* Manufacturer Grid */
+.manufacturers {
+  max-width: 1200px; margin: 0 auto; padding: 40px 24px 80px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 20px;
+}
+.mfr-card {
+  background: var(--card); border-radius: 22px; padding: 0;
+  border: 1px solid var(--border); position: relative;
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+  overflow: hidden;
+}
+.mfr-card[data-url] { cursor: pointer; }
+.mfr-card[data-url]:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.08); border-color: var(--accent); }
+.mfr-card[data-url]::after {
+  content: "↗"; position: absolute; top: 14px; right: 16px;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(255,255,255,0.92); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--text-muted); opacity: 0.7;
+  transition: opacity 0.25s, transform 0.25s, color 0.25s, background 0.25s;
+  z-index: 2;
+}
+.mfr-card[data-url]:hover::after {
+  opacity: 1; color: #fff; background: var(--accent); transform: translate(2px, -2px);
+}
+.mfr-photo-thumb {
+  width: 100%; height: 180px;
+  background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.mfr-photo-thumb img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center;
+}
+.mfr-photo-thumb .no-img { font-size: 48px; opacity: 0.3; }
+.mfr-content { padding: 28px 28px 28px; }
+.mfr-card .flag {
+  display: inline-block; padding: 4px 10px; border-radius: 6px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+  text-transform: uppercase; margin-bottom: 12px;
+}
+.flag.eu { background: #e3f2fd; color: #0071e3; }
+.flag.us { background: #ffebee; color: #ff3b30; }
+.flag.cn { background: #fff8e1; color: #ff9500; }
+.flag.kr { background: #e8f5e9; color: #34c759; }
+.mfr-card h3 { font-size: 22px; font-weight: 600; letter-spacing: -0.015em; margin-bottom: 4px; }
+.mfr-card .country { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; }
+.mfr-card .product {
+  font-size: 13px; color: var(--text); background: var(--bg);
+  padding: 8px 12px; border-radius: 8px; margin-bottom: 16px; font-weight: 500;
+}
+.mfr-card .capacity-box {
+  background: linear-gradient(135deg, #0071e3, #af52de);
+  color: #fff; padding: 12px 14px; border-radius: 12px; margin-bottom: 16px;
+}
+.mfr-card .capacity-box .cap-key {
+  font-size: 11px; opacity: 0.85; letter-spacing: 0.05em;
+  text-transform: uppercase; margin-bottom: 4px;
+}
+.mfr-card .capacity-box .cap-val { font-size: 17px; font-weight: 600; line-height: 1.3; }
+.mfr-card .capacity-box .cap-plan { font-size: 12px; opacity: 0.85; margin-top: 4px; }
+
+.specs { display: grid; gap: 8px; margin-bottom: 16px; }
+.spec-row {
+  display: flex; justify-content: space-between;
+  font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--border);
+}
+.spec-row:last-child { border-bottom: none; }
+.spec-row .key { color: var(--text-muted); }
+.spec-row .val { font-weight: 500; text-align: right; }
+.badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+.badge {
+  font-size: 11px; padding: 4px 10px; border-radius: 980px;
+  background: var(--bg); border: 1px solid var(--border);
+  color: var(--text-muted); font-weight: 500;
+}
+.badge.internal { background: #e3f2fd; color: #0071e3; border-color: transparent; }
+.badge.external { background: #fff3e0; color: #ff9500; border-color: transparent; }
+.badge.unknown { background: #f5f5f7; color: #6e6e73; border-color: transparent; }
+.badge.sofc { background: #e8f5e9; color: #34c759; border-color: transparent; }
+.badge.soec { background: #f3e5f5; color: #af52de; border-color: transparent; }
+.badge.rsoc { background: #fff8e1; color: #ff9500; border-color: transparent; }
+
+/* History Section (제조사별 개발 히스토리) */
+.history-section { background: #fff; padding: 40px 0 100px; }
+.history-tabs {
+  max-width: 1200px; margin: 0 auto 40px; padding: 0 24px;
+  display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.history-tabs::-webkit-scrollbar { height: 4px; }
+.history-tabs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.hist-tab {
+  flex-shrink: 0; padding: 10px 20px; border-radius: 980px;
+  border: 1px solid var(--border); background: var(--card);
+  font-size: 14px; font-weight: 500; color: var(--text);
+  cursor: pointer; white-space: nowrap; transition: all 0.2s;
+  font-family: inherit;
+}
+.hist-tab:hover { border-color: var(--accent); color: var(--accent); }
+.hist-tab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+.hist-panel { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+.hist-panel.hidden { display: none; }
+.hist-hero {
+  display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px;
+  align-items: center; margin-bottom: 60px; padding: 32px;
+  background: linear-gradient(135deg, #f5f5f7, #fbfbfd);
+  border-radius: 22px; border: 1px solid var(--border);
+}
+.hist-hero-img {
+  width: 100%; aspect-ratio: 4/3; border-radius: 16px; overflow: hidden;
+  background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+  display: flex; align-items: center; justify-content: center;
+}
+.hist-hero-img img { width: 100%; height: 100%; object-fit: cover; }
+.hist-hero-img .ph { font-size: 64px; opacity: 0.3; }
+.hist-hero-info h3 { font-size: 36px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 12px; }
+.hist-hero-info .latest-tag {
+  display: inline-block; padding: 5px 14px;
+  background: linear-gradient(135deg, #0071e3, #af52de);
+  color: white; border-radius: 980px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+  text-transform: uppercase; margin-bottom: 14px;
+}
+.hist-hero-info .latest-model { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+.hist-hero-info .latest-perf { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+.timeline { position: relative; padding-left: 40px; }
+.timeline::before {
+  content: ''; position: absolute; left: 8px; top: 12px; bottom: 12px;
+  width: 2px; background: linear-gradient(180deg, #0071e3, #af52de);
+  border-radius: 2px;
+}
+.ms-item { position: relative; margin-bottom: 28px; padding-left: 24px; }
+.ms-item::before {
+  content: ''; position: absolute; left: -38px; top: 12px;
+  width: 18px; height: 18px; background: #fff;
+  border: 4px solid #0071e3; border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(0,113,227,0.1);
+}
+.ms-item:nth-child(even)::before { border-color: #af52de; box-shadow: 0 0 0 4px rgba(175,82,222,0.1); }
+.ms-year {
+  font-size: 28px; font-weight: 700; letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #0071e3, #af52de);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; margin-bottom: 6px;
+}
+.ms-card {
+  background: var(--card); padding: 18px 22px; border-radius: 14px;
+  border: 1px solid var(--border);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.ms-card:hover { transform: translateX(4px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+.ms-card h4 { font-size: 17px; font-weight: 600; margin-bottom: 6px; letter-spacing: -0.01em; }
+.ms-card .specs { font-size: 13px; color: var(--text); margin-bottom: 6px; line-height: 1.5; }
+.ms-card .perf {
+  font-size: 12px; color: var(--accent); font-weight: 600;
+  background: #f0f7ff; padding: 4px 10px; border-radius: 8px;
+  display: inline-block; margin-bottom: 6px; margin-right: 6px;
+}
+.ms-card .src {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 12px; color: var(--text-muted); text-decoration: none;
+  margin-top: 4px;
+}
+.ms-card .src:hover { color: var(--accent); }
+
+@media (max-width: 768px) {
+  .hist-hero { grid-template-columns: 1fr; gap: 24px; padding: 24px; }
+  .hist-hero-info h3 { font-size: 28px; }
+  .ms-year { font-size: 22px; }
+  .timeline { padding-left: 28px; }
+  .ms-item::before { left: -30px; width: 14px; height: 14px; border-width: 3px; }
+}
+
+/* Comparison Table */
+.comparison { background: #000; color: #fff; padding: 100px 0; }
+.comparison .section-header h2 { color: #fff; }
+.comparison .section-header p { color: #a1a1a6; }
+.table-wrap { max-width: 1300px; margin: 0 auto; padding: 0 24px; overflow-x: auto; }
+.table-wrap table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table-wrap th {
+  background: #1c1c1e; padding: 16px 12px; text-align: left;
+  font-weight: 600; color: #f5f5f7; border-bottom: 1px solid #2c2c2e;
+  font-size: 12px; letter-spacing: 0.02em; text-transform: uppercase;
+}
+.table-wrap td {
+  padding: 14px 12px; border-bottom: 1px solid #2c2c2e; color: #d2d2d7;
+}
+.table-wrap tr:hover td { background: #1c1c1e; }
+
+/* News Section */
+.news-section { max-width: 1200px; margin: 0 auto; padding: 0 24px 60px; }
+.news-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 16px;
+}
+.news-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 20px 22px; transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.news-card:hover {
+  transform: translateY(-3px); box-shadow: 0 10px 26px rgba(0,0,0,0.06);
+  border-color: var(--accent);
+}
+.news-card .date {
+  font-size: 12px; font-weight: 600; color: var(--accent);
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+.news-card .tag-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.news-card .tag {
+  display: inline-block; padding: 2px 10px; border-radius: 980px;
+  font-size: 11px; font-weight: 600; background: #f5f5f7; color: var(--text-muted);
+}
+.news-card .tag.hot { background: #ffe5e5; color: var(--red); }
+.news-card .tag.mfr { background: #e8f1ff; color: var(--accent); }
+.news-card h4 {
+  font-size: 17px; font-weight: 600; letter-spacing: -0.01em;
+  line-height: 1.35; color: var(--text);
+}
+.news-card p {
+  font-size: 14px; color: var(--text-muted); line-height: 1.55;
+}
+.news-card a.src {
+  margin-top: auto; font-size: 12px; color: var(--accent);
+  text-decoration: none; font-weight: 500;
+}
+.news-card a.src:hover { text-decoration: underline; }
+
+/* Footer */
+footer {
+  text-align: center; padding: 60px 24px;
+  color: var(--text-muted); font-size: 13px; border-top: 1px solid var(--border);
+}
+footer a { color: var(--accent); text-decoration: none; }
+
+.mfr-card.hidden { display: none; }
+
+@media (max-width: 768px) {
+  .hero { padding: 60px 24px 40px; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  nav .links { display: none; }
+  .rank-card { grid-template-columns: 1fr; gap: 20px; }
+  .rank-num { text-align: left; font-size: 56px; }
+  .rank-metrics { grid-template-columns: 1fr; }
+  .rank-photo { aspect-ratio: 16/9; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <div class="logo">SOC Tracker</div>
+    <div class="links">
+      <a href="#news">최신 뉴스</a>
+      <a href="#ranking">Top 10 순위</a>
+      <a href="#manufacturers">제조사</a>
+      <a href="#sofc-comparison">SOFC</a>
+      <a href="#soec-comparison">SOEC</a>
+      <a href="#history">개발 히스토리</a>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>SOFC/SOEC<br><span class="gradient">Global Tech Tracker</span></h1>
+  <p class="subtitle">전 세계 22개 제조사의 스택·시스템·양산 능력을<br>한 화면에서 확인하세요.</p>
+  <div class="updated">
+    <span class="dot"></span>
+    <span>Last updated: <strong>2026-05-19</strong></span>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="stat-card"><div class="num">22</div><div class="label">추적 제조사</div></div>
+  <div class="stat-card"><div class="num">2GW</div><div class="label">최대 양산 (Bloom)</div></div>
+  <div class="stat-card"><div class="num">93%</div><div class="label">최고 효율 (Topsoe)</div></div>
+  <div class="stat-card"><div class="num">50MW</div><div class="label">최대 단일 모듈 (Sunfire 2026)</div></div>
+</section>
+
+<!-- ============ 최신 뉴스 ============ -->
+<div class="section-header" id="news">
+  <h2>최신 업데이트 뉴스</h2>
+  <p>2025-07 ~ 2026-05 핵심 변동사항 · 날짜 역순</p>
+</div>
+
+<section class="news-section">
+  <div class="news-grid">
+
+    <div class="news-card">
+      <div class="date">2026-05-19</div>
+      <div class="tag-row"><span class="tag hot">NEW</span><span class="tag mfr">Elcogen 🇪🇪</span></div>
+      <h4>E3000 G2 차세대 SOFC 스택 World Hydrogen Summit Rotterdam 공개</h4>
+      <p>Elcogen이 2026-05-20~21 Rotterdam World Hydrogen Summit에서 차세대 E3000 G2 SOFC 스택 공개. 핵심 파트너 인도가 시작되었으며 Q2 2026 광범위 출하 개시. 신규 대량생산 가능 플랫폼 발표.</p>
+      <a class="src" href="https://elcogen.com/elcogen-launches-new-mass-manufacturable-solid-oxide-fuel-cell-stack-platform-to-support-clean-energy-scale-up/" target="_blank" rel="noopener">출처 → Elcogen press</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2026-05</div>
+      <div class="tag-row"><span class="tag hot">NEW</span><span class="tag mfr">POSCO 🇰🇷 · KIMM · KIER</span></div>
+      <h4>20 kW 음극지지형 SOEC 3,000+ h 운전 · 효율 >83%</h4>
+      <p>POSCO Holdings + KIMM + KIER + KCERACELL 4자 컨소시엄이 국내 최초 20 kW 음극지지형 SOEC 시스템에서 3,000시간 이상 안정 운전 + 전기 효율 83% 초과 달성 (2026-03 발표). 시간당 H₂ ~6 Nm³, 공정 폐열로 200 °C 증기 예열.</p>
+      <a class="src" href="https://www.hydrogeninforms.com/news/first-20kw-class-anode-soec-system-of-south-korea-by-kimm/" target="_blank" rel="noopener">출처 → Hydrogen Informs</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2026-05</div>
+      <div class="tag-row"><span class="tag mfr">Topsoe 🇩🇰</span></div>
+      <h4>30% 효율 향상 + Forestal e-메탄올 프로젝트 채택</h4>
+      <p>C&EN(2025-11) 보도 — Topsoe Herning 신공장이 알칼리/PEM 대비 30% 효율 향상 주장. Forestal이 e-메탄올 생산용 SOEC 기술로 Topsoe 채택 (2026 초). 10년간 7.6 Mt CO₂ 회피 예상.</p>
+      <a class="src" href="https://www.topsoe.com/press-releases/forestal-selects-topsoes-breakthrough-soec-technology-for-e-methanol-production" target="_blank" rel="noopener">출처 → Topsoe press</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2026-02</div>
+      <div class="tag-row"><span class="tag mfr">두산퓨얼셀 🇰🇷 · LG전자</span></div>
+      <h4>LG전자 폐열회수 통합 솔루션 공동개발 MOU</h4>
+      <p>두산퓨얼셀과 LG전자가 SOFC 폐열회수 통합 솔루션 공동개발 MOU 체결 (2026-02). 데이터센터향 효율 통합 시스템 + Alleima 부품 수주로 대량 SOFC 양산 공급망 강화.</p>
+      <a class="src" href="https://www.hydrogen-worldexpo.com/industry-news/doosan-ordered-fuel-cell-components-alleima-mass-sofc-production" target="_blank" rel="noopener">출처 → Hydrogen Tech World Expo</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2026-04-13</div>
+      <div class="tag-row"><span class="tag hot">HOT</span><span class="tag mfr">Bloom Energy 🇺🇸</span></div>
+      <h4>Oracle 협약 2.45 → 2.8 GW 확대 · 양산 1→2 GW로 두 배</h4>
+      <p>Bloom Energy가 Oracle과의 데이터센터 AI 인프라 공급을 최대 2.8 GW로 확대(초기 1.2 GW 계약). Fremont CA 공장 양산을 1 GW에서 2026년 말 2 GW로 확장($100M 추가 투자).</p>
+      <a class="src" href="https://investor.bloomenergy.com/press-releases/press-release-details/2026/Bloom-Energy-and-Oracle-Expand-Strategic-Partnership-to-Deploy-up-to-2-8-GW-to-Accelerate-AI-Infrastructure-Build-Out/default.aspx" target="_blank" rel="noopener">출처 → Bloom IR</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2026-04</div>
+      <div class="tag-row"><span class="tag hot">HOT</span><span class="tag mfr">Sunfire 🇩🇪</span></div>
+      <h4>HyLink Alkaline 23 (50 MW 단일 모듈) 정식 출시</h4>
+      <p>50 MW 단일 모듈 알칼라인 전해 시스템 정식 출시. 100 MW 시스템 기준 모듈 수 10→2개로 축소되며 설치 비용 최대 50% 절감. 30-bar 가압 2세대 스택.</p>
+      <a class="src" href="https://sunfire.de/en/news/sunfire-launches-new-50-megawatt-electrolyzer-system-for-the-next-phase-of-industrial-green-hydrogen-scale-up/" target="_blank" rel="noopener">출처 → Sunfire press</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2026-04-15</div>
+      <div class="tag-row"><span class="tag mfr">Weichai 🇨🇳 · SFA 🇰🇷</span></div>
+      <h4>SFA, Weichai SOFC 양산설비 300억 원 수주</h4>
+      <p>한국 SFA가 중국 Weichai Power에 Ceres Power 라이선스 기반 SOFC 양산설비 30 bn KRW(약 $22M) 공급 계약. Shandong에 세계 최대급 SOFC 생산공장 인프라 구축.</p>
+      <a class="src" href="https://en.sedaily.com/finance/2026/04/15/sfa-secures-30-billion-won-hydrogen-fuel-cell-equipment" target="_blank" rel="noopener">출처 → Seoul Economic Daily</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2026-03-23</div>
+      <div class="tag-row"><span class="tag hot">HOT</span><span class="tag mfr">FuelCell Energy 🇺🇸</span></div>
+      <h4>Torrington CT 공장 100→350 MW/년 + 12.5 MW Power Block</h4>
+      <p>제조 거점 Torrington CT 공장 양산능력을 3배 이상 확대 발표(100→350 MW/년). 데이터센터향 12.5 MW 표준 패키지 Power Block 출시. Q1 FY26 매출 +61% YoY.</p>
+      <a class="src" href="https://www.globenewswire.com/news-release/2026/03/23/3260279/8041/en/FuelCell-Energy-Scales-Up-for-Data-Centers-with-Packaged-12-5-MW-Utility-Grade-Power-Block-Solution-and-Manufacturing-Expansion-Plans.html" target="_blank" rel="noopener">출처 → GlobeNewswire</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2026-02-25</div>
+      <div class="tag-row"><span class="tag mfr">미코파워 🇰🇷</span></div>
+      <h4>Meritz증권 + AFWP 400억 투자 집행 완료</h4>
+      <p>Meritz증권과 AFWP가 공동 신기술사업투자조합으로 미코파워에 400억 원 투자 집행. Meritz의 2026년 첫 모험자본 투자. 평택 브레인시티(33,057 m²) 30→100 MW 양산 확장.</p>
+      <a class="src" href="https://en.sedaily.com/news/2026/02/25/meritz-securities-invests-40-billion-won-in-hydrogen-fuel" target="_blank" rel="noopener">출처 → Seoul Economic Daily</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2026-02</div>
+      <div class="tag-row"><span class="tag mfr">SPIC 🇨🇳</span></div>
+      <h4>SPIC Green Energy 신설 — P2X 통합 자회사</h4>
+      <p>SPIC(国家电投)이 재생전력·수전해·암모니아/메탄올/SAF 등 Power-to-X 사업을 통합한 SPIC Green Energy Co. 신설. Da'an 그린수소 프로젝트(2025-07 첫 H₂ 생산)와 연계.</p>
+      <a class="src" href="https://www.gojilin.gov.cn/2026/02/12/c_14488.htm" target="_blank" rel="noopener">출처 → 지린성 정부 발표</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2026-01-21</div>
+      <div class="tag-row"><span class="tag mfr">포스코홀딩스 🇰🇷</span></div>
+      <h4>엔포러스(N4Rus) SOEC 스핀오프 설립</h4>
+      <p>포스코홀딩스 + 블루포인트가 RIST의 SOEC 기술을 기반으로 수소 스타트업 '엔포러스' 공동 설립·투자. 안진수 박사(전 RIST SOEC 연구책임) 대표 선임.</p>
+      <a class="src" href="https://wowtale.net/2026/01/21/253589/" target="_blank" rel="noopener">출처 → Wowtale</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2026-01-08</div>
+      <div class="tag-row"><span class="tag hot">HOT</span><span class="tag mfr">Bloom 🇺🇸 · AEP 🇺🇸</span></div>
+      <h4>AEP $2.65B / 최대 1 GW Bloom SOFC 공급 협약</h4>
+      <p>American Electric Power가 Bloom Energy에 최대 1 GW SOFC 발주 ($2.65B), 초기 100 MW 발주. 데이터센터·전력망 안정화 전력원으로 활용.</p>
+      <a class="src" href="https://fuelcellsworks.com/2026/01/08/electrolyzer/american-electric-power-locks-in-2-65bn-deal-to-deploy-up-to-1gw-of-bloom-energy-fuel-cells" target="_blank" rel="noopener">출처 → Fuel Cells Works</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2026-01</div>
+      <div class="tag-row"><span class="tag mfr">Sunfire 🇩🇪 · 스페인</span></div>
+      <h4>Repsol + Petronor 합산 200 MW 알칼라인 수주</h4>
+      <p>Repsol/Enagás Cartagena 100 MW + Petronor Muskiz 100 MW = 신규 200 MW 알칼라인 수주(가동 2029). 수주잔고 1,000 MW+ 돌파.</p>
+      <a class="src" href="https://sunfire.de/en/news/sunfire-secures-200-mw-electrolyzer-orders-in-spain/" target="_blank" rel="noopener">출처 → Sunfire press</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2025-12</div>
+      <div class="tag-row"><span class="tag hot">HOT</span><span class="tag mfr">Bloom 🇺🇸 · Brookfield</span></div>
+      <h4>Brookfield $5B AI 인프라 전략적 파트너십</h4>
+      <p>Brookfield가 Bloom Energy와 $5B 규모 전략적 AI 인프라 파트너십 체결. AI 데이터센터 SOFC 공급 확대용 자본 지원.</p>
+      <a class="src" href="https://investor.bloomenergy.com/press-releases/press-release-details/2025/Brookfield-and-Bloom-Energy-Announce-5-Billion-Strategic-AI-Infrastructure-Partnership/default.aspx" target="_blank" rel="noopener">출처 → Bloom IR</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2025-10</div>
+      <div class="tag-row"><span class="tag mfr">Topsoe 🇩🇰</span></div>
+      <h4>Herning 500 MW SOEC 양산 공장 준공</h4>
+      <p>유럽 최대 SOEC 양산 시설(23,000 m²) 준공. 연 500 MW (5 GW 확장 가능), EU에서 €94M 지원. 2026 풀가동 목표.</p>
+      <a class="src" href="https://www.topsoe.com/news/topsoe-inaugurates-europes-largest-soec-manufacturing-facility" target="_blank" rel="noopener">출처 → Topsoe press</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2025-09-17</div>
+      <div class="tag-row"><span class="tag mfr">Elcogen 🇪🇪</span></div>
+      <h4>ELCO I 360 MW 신공장 가동 + 2035 30 GW 로드맵</h4>
+      <p>14,000 m² 신공장 가동 시작(SOFC 50 + SOEC 200 MW/년). 장기 로드맵 1 GW에서 2035년 30 GW/년으로 30배 확장 발표. EU Innovation Fund €25M 추가 약정.</p>
+      <a class="src" href="https://elcogen.com/elco-i-if-project/" target="_blank" rel="noopener">출처 → Elcogen ELCO I project</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2025-07-28</div>
+      <div class="tag-row"><span class="tag mfr">두산퓨얼셀 🇰🇷 · Ceres 🇬🇧</span></div>
+      <h4>새만금 50 MW Ceres SoP 공식 양산 개시</h4>
+      <p>두산퓨얼셀이 군산 새만금 공장에서 Ceres Power의 metal-supported SOFC를 세계 최초로 양산 개시. 2026 연간 수주 목표 160~170 MW, 미국·독일·싱가포르 협의 중.</p>
+      <a class="src" href="https://www.ceres.tech/media/1ppfrodd/external_ceres-power-doosan-sop-announcement-20250728-final.pdf" target="_blank" rel="noopener">출처 → Ceres press</a>
+    </div>
+
+    <div class="news-card">
+      <div class="date">2025-07</div>
+      <div class="tag-row"><span class="tag mfr">SPIC 🇨🇳</span></div>
+      <h4>Da'an 그린수소·암모니아 첫 생산 성공</h4>
+      <p>지린성 Da'an의 풍·태양 800 MW 기반 통합 프로젝트에서 고순도 그린수소 첫 생산 성공, 시운전 진입. H₂ 32,000 t/년 + NH₃ 180,000 t/년, CO₂ 65만 t/년 저감.</p>
+      <a class="src" href="http://en.sasac.gov.cn/2025/09/28/c_19882.htm" target="_blank" rel="noopener">출처 → SASAC</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ TOP 10 순위 ============ -->
+<div class="section-header" id="ranking">
+  <h2>주요 개발사 Top 10</h2>
+  <p>현재 양산 능력 + 시스템 출력 + 효율 기준 순위</p>
+</div>
+
+<section class="ranking-section">
+  <div class="ranking-list">
+
+    <div class="rank-card">
+      <div class="rank-num">1</div>
+      <div class="rank-info">
+        <h3>Bloom Energy 🇺🇸</h3>
+        <div class="meta">Energy Server ES5 / Bloom Electrolyzer · Fremont CA + Newark DE</div>
+        <div class="rank-metrics">
+          <div class="metric"><div class="m-key">양산 능력</div><div class="m-val">1 GW/년 → 2 GW</div></div>
+          <div class="metric"><div class="m-key">시스템 출력</div><div class="m-val">200~325 kW</div></div>
+          <div class="metric"><div class="m-key">효율 (LHV)</div><div class="m-val">53~65%</div></div>
+        </div>
+        <div class="desc">현재 1 GW/년, 2026년 말 2 GW/년 확장(약 $100M). Oracle 2.8 GW(2026-04, 초기 1.2 GW), Brookfield $5B AI 인프라(2025-12), AEP $2.65B/1 GW(초기 100 MW).</div>
+      </div>
+      <div class="rank-photo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f8/Bloom_Energy_Servers_at_eBay_HQ_-_4405533596.jpg" alt="Bloom Energy" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="no-img" style="display:none;">⚡</div>
+        <div class="badge-overlay">SOFC + SOEC</div>
+      </div>
+    </div>
+
+    <div class="rank-card">
+      <div class="rank-num">2</div>
+      <div class="rank-info">
+        <h3>Topsoe 🇩🇰</h3>
+        <div class="meta">SOEC stack · Herning, Denmark</div>
+        <div class="rank-metrics">
+          <div class="metric"><div class="m-key">양산 능력</div><div class="m-val">500 MW/년</div></div>
+          <div class="metric"><div class="m-key">코어 출력</div><div class="m-val">350 kW</div></div>
+          <div class="metric"><div class="m-key">효율 (LHV)</div><div class="m-val">93%</div></div>
+        </div>
+        <div class="desc">유럽 최대 SOEC 양산 시설. 2026년 풀가동, 누적 10 GW 시스템 가능. 미국 공장 추가 계획. 3.5 bar 가압형 운전.</div>
+      </div>
+      <div class="rank-photo">
+        <img src="https://www.topsoe.com/hs-fs/hubfs/Solution_level_soec_stack_image_5.jpg" alt="Topsoe SOEC stack" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="no-img" style="display:none;">⚙</div>
+        <div class="badge-overlay">SOEC</div>
+      </div>
+    </div>
+
+    <div class="rank-card">
+      <div class="rank-num">3</div>
+      <div class="rank-info">
+        <h3>Sunfire 🇩🇪</h3>
+        <div class="meta">HyLink SOEC GEN3 · Solingen, 독일</div>
+        <div class="rank-metrics">
+          <div class="metric"><div class="m-key">양산 능력</div><div class="m-val">500 MW/년</div></div>
+          <div class="metric"><div class="m-key">시스템 출력</div><div class="m-val">10 MW/모듈</div></div>
+          <div class="metric"><div class="m-key">효율 (LHV)</div><div class="m-val">89% AC</div></div>
+        </div>
+        <div class="desc">알칼라인 500 MW/년 + SOEC 시리얼 생산. 수주잔고 1,000 MW+(2026-01 스페인 Repsol·Petronor 200 MW 추가). HyLink Alkaline 23(50 MW 단일 모듈, 2026-04 정식 출시 — 100 MW 시스템 설치비 -50%).</div>
+      </div>
+      <div class="rank-photo">
+        <img src="https://backend.sunfire.de/wp-content/uploads/2024/09/sunfire-soec.png" alt="Sunfire HyLink SOEC" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="no-img" style="display:none;">⚛</div>
+        <div class="badge-overlay">SOEC</div>
+      </div>
+    </div>
+
+    <div class="rank-card">
+      <div class="rank-num">4</div>
+      <div class="rank-info">
+        <h3>Elcogen 🇪🇪</h3>
+        <div class="meta">elcoStack E1000/E3000 · Tallinn, Estonia</div>
+        <div class="rank-metrics">
+          <div class="metric"><div class="m-key">양산 능력</div><div class="m-val">360 MW/년</div></div>
+          <div class="metric"><div class="m-key">스택 출력</div><div class="m-val">1~3 kW</div></div>
+          <div class="metric"><div class="m-key">운전 T</div><div class="m-val">≤720 °C</div></div>
+        </div>
+        <div class="desc">2025년 9월 ELCO I 가동, 360 MW/년. 장기 목표 2035년 30 GW/년 (EU Innovation Fund €25M 추가 약정). AVL과 MW급 SOEC 모듈 공동개발. SOFC/SOEC 양방향, 81 cm² ASC 셀.</div>
+      </div>
+      <div class="rank-photo">
+        <img src="https://elcogen.com/wp-content/uploads/2026/04/elcostack.avif" alt="Elcogen elcoStack" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="no-img" style="display:none;">🔋</div>
+        <div class="badge-overlay">SOFC + SOEC</div>
+      </div>
+    </div>
+
+    <div class="rank-card">
+      <div class="rank-num">5</div>
+      <div class="rank-info">
+        <h3>Ceres Power 🇬🇧</h3>
+        <div class="meta">SteelCell V5/V6 · Redhill, UK + 글로벌 라이선스</div>
+        <div class="rank-metrics">
+          <div class="metric"><div class="m-key">양산 능력</div><div class="m-val">260 MW+/년</div></div>
+          <div class="metric"><div class="m-key">스택 출력</div><div class="m-val">5~10 kW (V5)</div></div>
+          <div class="metric"><div class="m-key">운전 T</div><div class="m-val">500~600 °C</div></div>
+        </div>
+        <div class="desc">자체 10 MW + Doosan 50 MW + Bosch 200 MW + Delta(2026 양산 시작). 라이선스 모델로 빠른 글로벌 확산. CGO 전해질, 금속 지지형 저온 SOC.</div>
+      </div>
+      <div class="rank-photo">
+        <img src="https://www.ceres.tech/media/2r3l31op/mg-1404-ceres-stack-no-bg.png" alt="Ceres SteelCell" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="no-img" style="display:none;">⚒</div>
+        <div class="badge-overlay">SteelCell</div>
+      </div>
+    </div>
+
+    <div class="rank-card">
+      <div class="rank-num">6</div>
+      <div class="rank-info">
+        <h3>SolydEra 🇮🇹</h3>
+        <div class="meta">G8 / G8X-10 stack · Pergine Valsugana, Italy</div>
+        <div class="rank-metrics">
+          <div class="metric"><div class="m-key">양산 능력</div><div class="m-val">100 MW/년</div></div>
+          <div class="metric"><div class="m-key">G8X-10 출력</div><div class="m-val">10 / 25 kW</div></div>
+          <div class="metric"><div class="m-key">효율 (BlueGEN)</div><div class="m-val">60% (89% 종합)</div></div>
+        </div>
+        <div class="desc">SOFC 25 MW/년 + SOE 75 MW/년 = 100만 셀/년. 6,400 m² 공장 풀가동. 셀 크기 최대 180×180 mm. BlueGEN BG-15 m-CHP 상용.</div>
+      </div>
+      <div class="rank-photo">
+        <img src="https://www.solydera.com/media/12xj0rrt/g8_only-stack_3-4_uncovered_black-600x0-c-default.jpg" alt="SolydEra G8 stack" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="no-img" style="display:none;">⬜</div>
+        <div class="badge-overlay">SOFC + SOEC</div>
+      </div>
+    </div>
+
+    <div class="rank-card">
+      <div class="rank-num">7</div>
+      <div class="rank-info">
+        <h3>두산퓨얼셀 🇰🇷</h3>
+        <div class="meta">Ceres SteelCell 라이선스 SOFC 300 kW · 군산 새만금</div>
+        <div class="rank-metrics">
+          <div class="metric"><div class="m-key">양산 능력</div><div class="m-val">50 MW/년</div></div>
+          <div class="metric"><div class="m-key">시스템 출력</div><div class="m-val">300 kW</div></div>
+          <div class="metric"><div class="m-key">효율 (LHV)</div><div class="m-val">58%</div></div>
+        </div>
+        <div class="desc">2025-07 Ceres SoP 공식 양산 개시(세계 첫 metal-supported SOFC 양산). 1,437억 투자, 79,200 m². 2026 연간 수주 목표 160~170 MW(독·미·싱 3개사 협의), Hyaxiom 통한 미국 데이터센터 수주.</div>
+      </div>
+      <div class="rank-photo">
+        <img src="https://www.ceres.tech/media/3fxhncoc/doosan-factory-image-may-2024.jpeg" alt="Doosan Saemangeum factory" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="no-img" style="display:none;">🏭</div>
+        <div class="badge-overlay">SOFC</div>
+      </div>
+    </div>
+
+    <div class="rank-card">
+      <div class="rank-num">8</div>
+      <div class="rank-info">
+        <h3>FuelCell Energy 🇺🇸</h3>
+        <div class="meta">CSA SOFC / HiPoD SOEC · Torrington CT (제조 거점)</div>
+        <div class="rank-metrics">
+          <div class="metric"><div class="m-key">양산 능력</div><div class="m-val">100 → 350 MW/년</div></div>
+          <div class="metric"><div class="m-key">신제품</div><div class="m-val">12.5 MW Power Block</div></div>
+          <div class="metric"><div class="m-key">효율</div><div class="m-val">~60%</div></div>
+        </div>
+        <div class="desc">2026-03 Torrington CT 공장 100→350 MW/년 확대 발표(3배+). 12.5 MW 표준 패키지 Power Block 출시(데이터센터향). HiPoD 17,051 h 운전, INL SOEC 250 kW→150 kg-H₂/day. Q1 FY26 매출 +61%.</div>
+      </div>
+      <div class="rank-photo">
+        <img src="https://www.fuelcellenergy.com/hs-fs/hubfs/fuel-cell-manufacturer-usa-torrington.jpg" alt="FuelCell Energy plant" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="no-img" style="display:none;">🔬</div>
+        <div class="badge-overlay">SOFC + SOEC</div>
+      </div>
+    </div>
+
+    <div class="rank-card">
+      <div class="rank-num">9</div>
+      <div class="rank-info">
+        <h3>Huatsing (苏州华清京昆) 🇨🇳</h3>
+        <div class="meta">평판형 SOFC · Suzhou + Xuzhou, China</div>
+        <div class="rank-metrics">
+          <div class="metric"><div class="m-key">양산 능력</div><div class="m-val">200,000 셀/년</div></div>
+          <div class="metric"><div class="m-key">계획</div><div class="m-val">100만 셀/년</div></div>
+          <div class="metric"><div class="m-key">스택</div><div class="m-val">40,000 stacks/년</div></div>
+        </div>
+        <div class="desc">Xuzhou 신공장 풀가동 시 100만 셀 + 40,000 stacks + 1,500 reformer/년 양산 가능. 2010년 설립(한민방 교수 외), CUMTB와 산업화 협력.</div>
+      </div>
+      <div class="rank-photo">
+        <div class="no-img" style="display:flex;">🇨🇳</div>
+        <div class="badge-overlay">SOFC</div>
+      </div>
+    </div>
+
+    <div class="rank-card">
+      <div class="rank-num">10</div>
+      <div class="rank-info">
+        <h3>미코파워 🇰🇷</h3>
+        <div class="meta">TUCY 시리즈 · 안성 → 평택 브레인시티</div>
+        <div class="rank-metrics">
+          <div class="metric"><div class="m-key">양산 능력</div><div class="m-val">2 MW/년</div></div>
+          <div class="metric"><div class="m-key">계획</div><div class="m-val">30 → 100 MW → 1 GW</div></div>
+          <div class="metric"><div class="m-key">시스템 출력</div><div class="m-val">2/8/150 kW</div></div>
+        </div>
+        <div class="desc">평택 브레인시티(33,057 m²) 2026 초 30 MW/년 → 100 MW로 단계 확장, 장기 1 GW 기가팩토리. 2026-02-25 Meritz증권·AFWP 신기술사업투자조합 400억 원 집행 완료. 100 kW SOEC 시스템(62 kg-H₂/일), 2027 상반기 시범운전.</div>
+      </div>
+      <div class="rank-photo">
+        <img src="https://www.micopower.com/images/main/sofc_product_item01_01.png" alt="MiCo Power TUCY" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="no-img" style="display:none;">🇰🇷</div>
+        <div class="badge-overlay">SOFC + SOEC</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ 제조사 카드 (지역별) ============ -->
+<div class="section-header" id="manufacturers">
+  <h2>전체 제조사 상세</h2>
+  <p>스택 모델·셀 적층수·유효면적·운전조건·양산 능력</p>
+</div>
+
+<div class="region-tabs">
+  <div class="tabs-inner">
+    <button class="tab-btn active" data-region="all">전체</button>
+    <button class="tab-btn" data-region="eu">🇪🇺 유럽</button>
+    <button class="tab-btn" data-region="us">🇺🇸 미국</button>
+    <button class="tab-btn" data-region="cn">🇨🇳 중국</button>
+    <button class="tab-btn" data-region="kr">🇰🇷 한국</button>
+  </div>
+</div>
+
+<div class="manufacturers">
+
+  <!-- 유럽 -->
+  <div class="mfr-card" data-region="eu">
+    <div class="mfr-photo-thumb">
+      <img src="https://www.topsoe.com/hs-fs/hubfs/Solution_level_soec_stack_image_5.jpg" alt="Topsoe stack" loading="lazy" onerror="this.style.display='none';">
+    </div>
+    <div class="mfr-content">
+      <span class="flag eu">EUROPE</span>
+      <h3>Topsoe</h3>
+      <div class="country">덴마크 · topsoe.com</div>
+      <div class="product">SOEC stack module / eCOs / 통합 SOEC 플랜트</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">500 MW/년 (Herning)</div>
+        <div class="cap-plan">2026 풀가동 · 미국 공장 추가 계획</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">스택당 셀 수</span><span class="val">100 cells</span></div>
+        <div class="spec-row"><span class="key">셀 유효면적</span><span class="val">~150 cm² (추정)</span></div>
+        <div class="spec-row"><span class="key">코어 출력</span><span class="val">350 kW (12 stacks)</span></div>
+        <div class="spec-row"><span class="key">전기 효율</span><span class="val">93% LHV</span></div>
+        <div class="spec-row"><span class="key">운전 온도/압력</span><span class="val">700~750 °C / 3.5 bar</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge soec">SOEC</span>
+        <span class="badge internal">내부 매니폴드</span>
+        <span class="badge">가압형</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="eu">
+    <div class="mfr-photo-thumb">
+      <img src="https://backend.sunfire.de/wp-content/uploads/2024/09/sunfire-soec.png" alt="Sunfire SOEC" loading="lazy" onerror="this.style.display='none';">
+    </div>
+    <div class="mfr-content">
+      <span class="flag eu">EUROPE</span>
+      <h3>Sunfire</h3>
+      <div class="country">독일 · sunfire.de</div>
+      <div class="product">Sunfire-HyLink SOEC GEN 3 / SOFC</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">500 MW/년 (알칼라인+SOEC)</div>
+        <div class="cap-plan">수주잔고 1,000 MW+ · Solingen 공장</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">모듈 출력 (SOEC)</span><span class="val">10 MW</span></div>
+        <div class="spec-row"><span class="key">HyLink Alkaline 23</span><span class="val">50 MW 단일 모듈 (2026-04)</span></div>
+        <div class="spec-row"><span class="key">전기 효율</span><span class="val">89% LHV (AC)</span></div>
+        <div class="spec-row"><span class="key">신규 수주 (2026-01)</span><span class="val">스페인 200 MW</span></div>
+        <div class="spec-row"><span class="key">설치비</span><span class="val">100 MW 시스템 -50%</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge soec">SOEC</span>
+        <span class="badge sofc">SOFC</span>
+        <span class="badge unknown">매니폴드 미공개</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="eu">
+    <div class="mfr-photo-thumb">
+      <img src="https://www.solydera.com/media/12xj0rrt/g8_only-stack_3-4_uncovered_black-600x0-c-default.jpg" alt="SolydEra G8" loading="lazy" onerror="this.style.display='none';">
+    </div>
+    <div class="mfr-content">
+      <span class="flag eu">EUROPE</span>
+      <h3>SolydEra</h3>
+      <div class="country">이탈리아 · solydera.com</div>
+      <div class="product">G8 / G8X-10 stack · BlueGEN BG-15</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">100 MW/년 (100만 셀/년)</div>
+        <div class="cap-plan">SOFC 25 + SOE 75 / Pergine 6,400 m² 풀가동</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">G8X-10 출력</span><span class="val">10 kW SOFC / 25 kW SOEC</span></div>
+        <div class="spec-row"><span class="key">데이터센터 SOFC</span><span class="val">90 kW, 60% 효율 (신제품)</span></div>
+        <div class="spec-row"><span class="key">셀 크기 (최대)</span><span class="val">180×180 mm</span></div>
+        <div class="spec-row"><span class="key">Dynelectro 1 MW SOEC</span><span class="val">AC:DC, 수명 5배</span></div>
+        <div class="spec-row"><span class="key">BlueGEN 효율</span><span class="val">60% / 89% 종합</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge sofc">SOFC</span>
+        <span class="badge soec">SOEC</span>
+        <span class="badge internal">내부 매니폴드</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="eu">
+    <div class="mfr-photo-thumb">
+      <img src="https://convion.fi/wp-content/uploads/2023/12/C60_datasheet_thumb-213x300.png" alt="Convion C60" loading="lazy" onerror="this.style.display='none';">
+    </div>
+    <div class="mfr-content">
+      <span class="flag eu">EUROPE</span>
+      <h3>Convion</h3>
+      <div class="country">핀란드 · convion.fi</div>
+      <div class="product">C50 / C60 / C250e 시스템 (시스템 인테그레이터)</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">시스템 단위 출하</div>
+        <div class="cap-plan">스택 자체 미생산 (Elcogen·SolydEra 사용)</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">C50 / C60 출력</span><span class="val">58 / 60 kW</span></div>
+        <div class="spec-row"><span class="key">전기 효율</span><span class="val">53~60% LHV</span></div>
+        <div class="spec-row"><span class="key">종합 효율</span><span class="val">>85%</span></div>
+        <div class="spec-row"><span class="key">가용도</span><span class="val">99% (7,000 h)</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge sofc">SOFC</span>
+        <span class="badge internal">내부 매니폴드</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="eu">
+    <div class="mfr-photo-thumb">
+      <img src="https://www.ceres.tech/media/2r3l31op/mg-1404-ceres-stack-no-bg.png" alt="Ceres SteelCell" loading="lazy" onerror="this.style.display='none';">
+    </div>
+    <div class="mfr-content">
+      <span class="flag eu">EUROPE</span>
+      <h3>Ceres Power</h3>
+      <div class="country">영국 · ceres.tech</div>
+      <div class="product">SteelCell V5/V6 (CGO 전해질, 저온형)</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">260 MW+/년 (라이선스 포함)</div>
+        <div class="cap-plan">자체 10 + Doosan 50 + Bosch 200 + Delta 2026</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">셀 종류</span><span class="val">금속 지지형 + CGO</span></div>
+        <div class="spec-row"><span class="key">운전 온도</span><span class="val">500~600 °C (저온)</span></div>
+        <div class="spec-row"><span class="key">스택 출력</span><span class="val">5~10 kW (V5)</span></div>
+        <div class="spec-row"><span class="key">SOEC V6 시제</span><span class="val">1 MW 단일 모듈</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge sofc">SOFC</span>
+        <span class="badge soec">SOEC</span>
+        <span class="badge internal">내부 매니폴드</span>
+        <span class="badge">저온형</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="eu">
+    <div class="mfr-photo-thumb">
+      <img src="https://elcogen.com/wp-content/uploads/2026/04/elcostack.avif" alt="Elcogen elcoStack" loading="lazy" onerror="this.style.display='none';">
+    </div>
+    <div class="mfr-content">
+      <span class="flag eu">EUROPE</span>
+      <h3>Elcogen</h3>
+      <div class="country">에스토니아 · elcogen.com</div>
+      <div class="product">elcoStack E1000 / E3000 / E10000</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">360 MW/년 (ELCO I, 2025-09 가동)</div>
+        <div class="cap-plan">2035년 30 GW/년 목표 · EU IF €25M 추가 · Tallinn</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">E1000 / E3000 셀수</span><span class="val">39 / 119 cells</span></div>
+        <div class="spec-row"><span class="key">셀 유효면적</span><span class="val">81 cm²</span></div>
+        <div class="spec-row"><span class="key">출력</span><span class="val">1,000 / 3,000 W</span></div>
+        <div class="spec-row"><span class="key">운전 온도 (max)</span><span class="val">720 °C</span></div>
+        <div class="spec-row"><span class="key">AVL 협력</span><span class="val">MW급 SOEC 모듈</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge sofc">SOFC</span>
+        <span class="badge soec">SOEC</span>
+        <span class="badge rsoc">rSOC</span>
+        <span class="badge internal">내부 매니폴드</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 미국 -->
+  <div class="mfr-card" data-region="us">
+    <div class="mfr-photo-thumb">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/f/f8/Bloom_Energy_Servers_at_eBay_HQ_-_4405533596.jpg" alt="Bloom Energy" loading="lazy" onerror="this.style.display='none';">
+    </div>
+    <div class="mfr-content">
+      <span class="flag us">USA</span>
+      <h3>Bloom Energy</h3>
+      <div class="country">미국 · bloomenergy.com</div>
+      <div class="product">Energy Server ES5 / Bloom Electrolyzer</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">1 GW/년 → 2 GW (2026 말)</div>
+        <div class="cap-plan">Fremont CA + Newark DE · 추가 $100M 투자</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">셀</span><span class="val">평판 ASC, 100×100 mm</span></div>
+        <div class="spec-row"><span class="key">시스템</span><span class="val">ES5 200~300 / ES6.5 325 kW</span></div>
+        <div class="spec-row"><span class="key">효율</span><span class="val">53~65% LHV</span></div>
+        <div class="spec-row"><span class="key">Oracle 협약</span><span class="val">2.8 GW (초기 1.2 GW)</span></div>
+        <div class="spec-row"><span class="key">Brookfield AI</span><span class="val">$5B 파트너십</span></div>
+        <div class="spec-row"><span class="key">AEP 협약</span><span class="val">$2.65B / 1 GW</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge sofc">SOFC</span>
+        <span class="badge soec">SOEC</span>
+        <span class="badge internal">내부 매니폴드</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="us">
+    <div class="mfr-photo-thumb">
+      <img src="https://www.fuelcellenergy.com/hs-fs/hubfs/fuel-cell-manufacturer-usa-torrington.jpg" alt="FuelCell Energy plant" loading="lazy" onerror="this.style.display='none';">
+    </div>
+    <div class="mfr-content">
+      <span class="flag us">USA</span>
+      <h3>FuelCell Energy</h3>
+      <div class="country">미국 · fuelcellenergy.com</div>
+      <div class="product">CSA SOFC / HiPoD SOEC · 12.5 MW Power Block (2026)</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">100 → 350 MW/년 (Torrington CT)</div>
+        <div class="cap-plan">2026-03 3배+ 확장 발표 · 데이터센터 집중</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">12.5 MW Power Block</span><span class="val">표준 패키지 (2026-03 출시)</span></div>
+        <div class="spec-row"><span class="key">CSA 비출력 (EC)</span><span class="val">>2,000 W/kg</span></div>
+        <div class="spec-row"><span class="key">HiPoD 운전</span><span class="val">17,051 h (39 mV/1,000 h)</span></div>
+        <div class="spec-row"><span class="key">INL SOEC 시험</span><span class="val">250 kW → 150 kg-H₂/day</span></div>
+        <div class="spec-row"><span class="key">Q1 FY26 매출</span><span class="val">$30.5M (+61% YoY)</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge sofc">SOFC</span>
+        <span class="badge soec">SOEC</span>
+        <span class="badge internal">내부 매니폴드</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="us">
+    <div class="mfr-photo-thumb">
+      <img src="https://cdn.prod.website-files.com/690a1f9b9a10f0219c1acdf2/692f49709d3540eed73ef2fb_OxEon_65CellStack_001%20(2).jpg" alt="OxEon 65-cell stack" loading="lazy" onerror="this.style.display='none';">
+    </div>
+    <div class="mfr-content">
+      <span class="flag us">USA</span>
+      <h3>OxEon Energy</h3>
+      <div class="country">미국 · oxeonenergy.com</div>
+      <div class="product">SOEC 5/25 kW 모듈 · CO₂/H₂O 공전해</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">파일럿 라인 운영 중</div>
+        <div class="cap-plan">25 MWe/년 목표 (DOE $36M / $99M 6년)</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">1 kW 스택 면적</span><span class="val">300 cm² active</span></div>
+        <div class="spec-row"><span class="key">모듈 출력</span><span class="val">5 / 25 kW</span></div>
+        <div class="spec-row"><span class="key">운전 온도</span><span class="val">~750 °C</span></div>
+        <div class="spec-row"><span class="key">BTO 파일럿 (2025-11)</span><span class="val">바이오가스 → 합성연료</span></div>
+        <div class="spec-row"><span class="key">자동화 파트너</span><span class="val">JR Auto / ASYS / ONEJOON</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge soec">SOEC</span>
+        <span class="badge external">외부 매니폴드 (추정)</span>
+        <span class="badge">공전해</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="us">
+    <div class="mfr-photo-thumb">
+      <div class="no-img" style="display:flex;">🇺🇸</div>
+    </div>
+    <div class="mfr-content">
+      <span class="flag us">USA</span>
+      <h3>Versa Power Systems</h3>
+      <div class="country">미국 · FCE 자회사</div>
+      <div class="product">RSOFC 양방향 스택</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">FCE Calgary 라인 통합</div>
+        <div class="cap-plan">40~80 MW/년에 포함</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">셀 활성면적</span><span class="val">550 cm² (25×25 cm)</span></div>
+        <div class="spec-row"><span class="key">스택 정격</span><span class="val">10 kW/stack</span></div>
+        <div class="spec-row"><span class="key">운전 온도</span><span class="val">750 °C</span></div>
+        <div class="spec-row"><span class="key">운전 시간</span><span class="val">5,000 h 통과</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge sofc">SOFC</span>
+        <span class="badge soec">SOEC</span>
+        <span class="badge rsoc">rSOC</span>
+        <span class="badge external">외부 매니폴드 (추정)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 중국 -->
+  <div class="mfr-card" data-region="cn">
+    <div class="mfr-photo-thumb">
+      <div class="no-img" style="display:flex;">🇨🇳</div>
+    </div>
+    <div class="mfr-content">
+      <span class="flag cn">CHINA</span>
+      <h3>潮州三环 (CCTC)</h3>
+      <div class="country">중국 · cctc.cc</div>
+      <div class="product">SOFC 단셀, 1·1.5·35·50 kW 스택 · 300 kW 시스템</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">단셀·전해질 분리판 대량 양산</div>
+        <div class="cap-plan">2025 300 kW 상용 데모(중국 최초, 国家能源局 首台套)</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">단셀 시장</span><span class="val">글로벌 전해질 1위</span></div>
+        <div class="spec-row"><span class="key">210 kW 효율 (AC 순)</span><span class="val">64.1% / 91.2% CHP</span></div>
+        <div class="spec-row"><span class="key">50 kW 신모델</span><span class="val">power density +43%</span></div>
+        <div class="spec-row"><span class="key">2024 SOC 입찰</span><span class="val">3건 330 kW+ 1위</span></div>
+        <div class="spec-row"><span class="key">R&D 투자 (2024)</span><span class="val">1.56억 RMB</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge sofc">SOFC</span>
+        <span class="badge unknown">매니폴드 미공개</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="cn">
+    <div class="mfr-photo-thumb">
+      <div class="no-img" style="display:flex;">🇨🇳</div>
+    </div>
+    <div class="mfr-content">
+      <span class="flag cn">CHINA</span>
+      <h3>上海重塑 (REFIRE)</h3>
+      <div class="country">중국 · en.refire.com</div>
+      <div class="product">PEMFC 주력 + PEM/ALK 전해조 (SOEC 양산 미발표)</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">PEMFC 차량용 5,900대</div>
+        <div class="cap-plan">SOEC 양산 라인 발표 없음 (PEM 중심)</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">시장 점유 (PEMFC)</span><span class="val">중국 ~62% (4사 합산)</span></div>
+        <div class="spec-row"><span class="key">2025 연간 매출</span><span class="val">RMB 595.2M (-8.3% YoY)</span></div>
+        <div class="spec-row"><span class="key">매출총이익</span><span class="val">RMB 68.7M (-38.5%)</span></div>
+        <div class="spec-row"><span class="key">SOEC 사업</span><span class="val">R&D 단계 (E2H/H2E)</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge soec">SOEC</span>
+        <span class="badge unknown">사양 미공개</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="cn">
+    <div class="mfr-photo-thumb">
+      <div class="no-img" style="display:flex;">🇨🇳</div>
+    </div>
+    <div class="mfr-content">
+      <span class="flag cn">CHINA</span>
+      <h3>SPIC 国家电投</h3>
+      <div class="country">중국 · State Power Investment Corp.</div>
+      <div class="product">Da'an 그린수소·암모니아 통합 데모 (P2X)</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">2025-07 첫 그린수소 생산 / 시운전</div>
+        <div class="cap-plan">2026-02 SPIC Green Energy 신설 (P2X 통합)</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">위치</span><span class="val">지린성 Da'an</span></div>
+        <div class="spec-row"><span class="key">풍·태양</span><span class="val">800 MW</span></div>
+        <div class="spec-row"><span class="key">H₂ 생산</span><span class="val">32,000 t/년</span></div>
+        <div class="spec-row"><span class="key">NH₃ 생산</span><span class="val">180,000 t/년</span></div>
+        <div class="spec-row"><span class="key">투자 규모</span><span class="val">$920M (재확인)</span></div>
+        <div class="spec-row"><span class="key">CO₂ 저감</span><span class="val">65만 t/년</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge soec">SOEC</span>
+        <span class="badge">국가 주도</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="cn">
+    <div class="mfr-photo-thumb">
+      <div class="no-img" style="display:flex;">🇨🇳</div>
+    </div>
+    <div class="mfr-content">
+      <span class="flag cn">CHINA</span>
+      <h3>苏州华清京昆 (Huatsing)</h3>
+      <div class="country">중국 · huatsing-power.com</div>
+      <div class="product">평판형 SOFC 셀·스택·시스템</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">200,000 셀 + 200 sets/년</div>
+        <div class="cap-plan">100만 셀 + 40,000 stacks/년 (Xuzhou 풀가동)</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">설립</span><span class="val">2010 (한민방 외)</span></div>
+        <div class="spec-row"><span class="key">기술 협력</span><span class="val">CUMTB</span></div>
+        <div class="spec-row"><span class="key">셀 유효면적</span><span class="val">~100 cm² (추정)</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge sofc">SOFC</span>
+        <span class="badge unknown">매니폴드 미공개</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="cn">
+    <div class="mfr-photo-thumb">
+      <div class="no-img" style="display:flex;">🇨🇳</div>
+    </div>
+    <div class="mfr-content">
+      <span class="flag cn">CHINA</span>
+      <h3>Weichai Power 潍柴动力</h3>
+      <div class="country">중국 · weichai.com (Ceres 라이선스)</div>
+      <div class="product">metal-supported SOFC · 25/100 kW 시스템</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">Shandong 세계 최대급 SOFC 공장</div>
+        <div class="cap-plan">2026-04 SFA에 양산설비 30 bn KRW (≈$22M) 발주</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">기술 기반</span><span class="val">Ceres SteelCell 라이선스</span></div>
+        <div class="spec-row"><span class="key">2025-11 인도</span><span class="val">25 kW SOFC CHP (Shaanxi Gas)</span></div>
+        <div class="spec-row"><span class="key">2025-12 인도</span><span class="val">100 kW SOFC 분산발전 (SPIC)</span></div>
+        <div class="spec-row"><span class="key">타깃</span><span class="val">AI 데이터센터, 30 MW급 개발</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge sofc">SOFC</span>
+        <span class="badge internal">내부 매니폴드</span>
+        <span class="badge">저온형</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="cn">
+    <div class="mfr-photo-thumb">
+      <div class="no-img" style="display:flex;">🇨🇳</div>
+    </div>
+    <div class="mfr-content">
+      <span class="flag cn">CHINA</span>
+      <h3>Sinopec 中国石化</h3>
+      <div class="country">중국 · 국유 정유·화학 (수소 4.45 Mt/년)</div>
+      <div class="product">SOEC 파일럿 · 산업급 해수전해 · PEM/ALK</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">100 kW SOEC 파일럿 (Zhongyuan Oilfield)</div>
+        <div class="cap-plan">Qingdao 정유소 산업급 해수→수소 확장</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">H₂ 연간 생산</span><span class="val">4.45 Mt (세계 최대)</span></div>
+        <div class="spec-row"><span class="key">수소 충전소</span><span class="val">146기 + 11곳 공급센터</span></div>
+        <div class="spec-row"><span class="key">SOEC 파일럿</span><span class="val">2024 말 가동</span></div>
+        <div class="spec-row"><span class="key">해수전해</span><span class="val">7.5 MW PV+H₂ 파일럿</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge soec">SOEC</span>
+        <span class="badge">국가 주도</span>
+        <span class="badge">R&D</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 한국 -->
+  <div class="mfr-card" data-region="kr">
+    <div class="mfr-photo-thumb">
+      <img src="https://www.ceres.tech/media/3fxhncoc/doosan-factory-image-may-2024.jpeg" alt="Doosan factory" loading="lazy" onerror="this.style.display='none';">
+    </div>
+    <div class="mfr-content">
+      <span class="flag kr">KOREA</span>
+      <h3>두산퓨얼셀</h3>
+      <div class="country">한국 · doosanfuelcell.com</div>
+      <div class="product">Ceres SteelCell 라이선스 SOFC 300 kW</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">50 MW/년 (군산 새만금, 2025-07 SoP)</div>
+        <div class="cap-plan">2026 수주 목표 160~170 MW · 독·미·싱 협의</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">시스템 출력</span><span class="val">300 kW</span></div>
+        <div class="spec-row"><span class="key">전기 효율</span><span class="val">58%</span></div>
+        <div class="spec-row"><span class="key">미국 자회사</span><span class="val">Hyaxiom (데이터센터 수주)</span></div>
+        <div class="spec-row"><span class="key">운전 온도</span><span class="val">~600 °C</span></div>
+        <div class="spec-row"><span class="key">셀 종류</span><span class="val">Ceres SteelCell (CGO)</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge sofc">SOFC</span>
+        <span class="badge internal">내부 매니폴드</span>
+        <span class="badge">저온형</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="kr">
+    <div class="mfr-photo-thumb">
+      <img src="https://www.micopower.com/images/main/sofc_product_item01_01.png" alt="MiCo Power TUCY" loading="lazy" onerror="this.style.display='none';">
+    </div>
+    <div class="mfr-content">
+      <span class="flag kr">KOREA</span>
+      <h3>미코파워</h3>
+      <div class="country">한국 · micopower.com</div>
+      <div class="product">TUCY 시리즈 (2/8/25 kW 스택, 150 kW 시스템)</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">2 MW/년 (안성)</div>
+        <div class="cap-plan">평택 33,057 m²: 30 → 100 MW → 1 GW 단계화</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">셀</span><span class="val">ASC 평판형 (12×12 cm)</span></div>
+        <div class="spec-row"><span class="key">TUCY-Q150</span><span class="val">25 kW × 6 = 150 kW</span></div>
+        <div class="spec-row"><span class="key">Q150 효율</span><span class="val">59.5%</span></div>
+        <div class="spec-row"><span class="key">Meritz 투자 (2026-02-25)</span><span class="val">400억 원 집행</span></div>
+        <div class="spec-row"><span class="key">SOEC 시스템</span><span class="val">100 kW (62 kg-H₂/일)</span></div>
+        <div class="spec-row"><span class="key">2025</span><span class="val">국내 첫 100% 국산 SOFC 발전사업</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge sofc">SOFC</span>
+        <span class="badge soec">SOEC</span>
+        <span class="badge unknown">매니폴드 미공개</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="kr">
+    <div class="mfr-photo-thumb">
+      <div class="no-img" style="display:flex;">🇰🇷</div>
+    </div>
+    <div class="mfr-content">
+      <span class="flag kr">KOREA</span>
+      <h3>포스코홀딩스 + 엔포러스</h3>
+      <div class="country">한국 · 산업·R&D</div>
+      <div class="product">국산 20 kW SOEC 스택 모듈 · 엔포러스(N4Rus) 스핀오프</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">R&D 단계 (포항 영일만)</div>
+        <div class="cap-plan">RIST 컨소시엄 · 180 kW급 상용화 목표</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">스택 출력</span><span class="val">20 kW (국내 최초 국산화)</span></div>
+        <div class="spec-row"><span class="key">시스템 효율</span><span class="val">83.3%</span></div>
+        <div class="spec-row"><span class="key">엔포러스 (2026-01)</span><span class="val">포스코+블루포인트 공동 설립</span></div>
+        <div class="spec-row"><span class="key">대표</span><span class="val">안진수 박사 (前 RIST SOEC)</span></div>
+        <div class="spec-row"><span class="key">파트너</span><span class="val">KIST/KIER/KIMM/POSTECH</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge soec">SOEC</span>
+        <span class="badge">국산화</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="kr">
+    <div class="mfr-photo-thumb">
+      <img src="https://energium.kier.re.kr/attach/board/news/20240404/31a6e46aa560429e67d9b5f061eeef23.jpg" alt="KIER 8 kW SOEC stack" loading="lazy" onerror="this.style.display='none';">
+    </div>
+    <div class="mfr-content">
+      <span class="flag kr">KOREA</span>
+      <h3>KIER</h3>
+      <div class="country">한국 · 정부출연연구소</div>
+      <div class="product">단스택 R&D · Co-SOEC 연구</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">분리판 1,000+ 매/일 프레스 라인</div>
+        <div class="cap-plan">삼성전기·범한퓨얼셀 기술이전</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">스택 출력</span><span class="val">8 kW SOEC + 4 kW SOFC 병행</span></div>
+        <div class="spec-row"><span class="key">셀 베이스</span><span class="val">Elcogen ASC, 81 cm²</span></div>
+        <div class="spec-row"><span class="key">운전 조건</span><span class="val">750 °C, 1 atm</span></div>
+        <div class="spec-row"><span class="key">안정 운전</span><span class="val">2,500 h (5.7 kg H₂/일)</span></div>
+        <div class="spec-row"><span class="key">차별화</span><span class="val">실험+ML+MOO+경제성 통합</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge soec">SOEC</span>
+        <span class="badge">Co-SOEC</span>
+        <span class="badge">R&D</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="kr">
+    <div class="mfr-photo-thumb">
+      <div class="no-img" style="display:flex;">🇰🇷</div>
+    </div>
+    <div class="mfr-content">
+      <span class="flag kr">KOREA</span>
+      <h3>범한퓨얼셀</h3>
+      <div class="country">한국 · bumhanfuelcell.com (KOSDAQ 382900)</div>
+      <div class="product">10 kW SOFC 시스템 · 국산 지르코니아 SOEC</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">10 kW SOFC 상품화 추진</div>
+        <div class="cap-plan">2026년 SOFC 개발 완료 목표</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">발전 효율 목표</span><span class="val">60%+ LHV</span></div>
+        <div class="spec-row"><span class="key">연료 이용률</span><span class="val">85% 목표</span></div>
+        <div class="spec-row"><span class="key">국책 과제</span><span class="val">국산 지르코니아 SOEC 주관</span></div>
+        <div class="spec-row"><span class="key">파트너</span><span class="val">KIER 기술이전</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge sofc">SOFC</span>
+        <span class="badge soec">SOEC</span>
+        <span class="badge">국산화</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mfr-card" data-region="kr">
+    <div class="mfr-photo-thumb">
+      <div class="no-img" style="display:flex;">🇰🇷</div>
+    </div>
+    <div class="mfr-content">
+      <span class="flag kr">KOREA</span>
+      <h3>SK에코플랜트 + Bloom SK Fuel Cell</h3>
+      <div class="country">한국 · skecoplant.com (Bloom 합작)</div>
+      <div class="product">SOFC 합작 생산 · SOEC 그린수소 실증</div>
+      <div class="capacity-box">
+        <div class="cap-key">양산 능력</div>
+        <div class="cap-val">Bloom SK Fuel Cell 구미 공장</div>
+        <div class="cap-plan">국내 380 MW SOFC 수주 (역대 최대)</div>
+      </div>
+      <div class="specs">
+        <div class="spec-row"><span class="key">합작사</span><span class="val">Bloom Energy 🇺🇸 + SK</span></div>
+        <div class="spec-row"><span class="key">국내 수주</span><span class="val">380 MW SOFC</span></div>
+        <div class="spec-row"><span class="key">SOEC 실증</span><span class="val">국내 최초 그린수소 생산 성공</span></div>
+        <div class="spec-row"><span class="key">시스템</span><span class="val">Bloom ES5 200~300 kW 기반</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge sofc">SOFC</span>
+        <span class="badge soec">SOEC</span>
+        <span class="badge internal">내부 매니폴드</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ SOFC 비교표 ============ -->
+<section class="comparison" id="sofc-comparison">
+  <div class="section-header">
+    <h2>SOFC 종합 비교</h2>
+    <p>주요 SOFC 제품의 스택·시스템·양산 능력 한눈에 보기</p>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>제조사</th><th>모델</th><th>셀수</th><th>유효면적</th><th>스택 kW</th><th>시스템</th><th>효율 LHV</th><th>운전 °C</th><th>매니폴드</th><th>양산 능력</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Bloom Energy 🇺🇸</td><td>ES5/ES6.5</td><td>~40~80</td><td>100 cm²</td><td>~1~2</td><td>200~325 kW</td><td>53~65%</td><td>800~850</td><td>내부</td><td><strong>1 → 2 GW/년</strong></td></tr>
+        <tr><td>FuelCell Energy 🇺🇸</td><td>CSA / 12.5 MW PB</td><td>—</td><td>—</td><td>60</td><td>12.5 MW Power Block</td><td>~60%</td><td>750</td><td>내부</td><td><strong>100→350 MW/년</strong></td></tr>
+        <tr><td>Versa Power 🇺🇸</td><td>RSOFC</td><td>—</td><td>550 cm²</td><td>10</td><td>—</td><td>—</td><td>750</td><td>외부</td><td>FCE 통합</td></tr>
+        <tr><td>SolydEra 🇮🇹</td><td>G8 / G8X-10</td><td>~60</td><td>80~324 cm²</td><td>1.5 / 10</td><td>BlueGEN 1.5 kW</td><td>60% (89% 종합)</td><td>650~800</td><td>내부</td><td>100 MW/년</td></tr>
+        <tr><td>Convion 🇫🇮</td><td>C50 / C60 / C250e</td><td>—</td><td>—</td><td>—</td><td>58 / 60 / 250 kW</td><td>53~60%</td><td>750</td><td>내부</td><td>시스템 단위</td></tr>
+        <tr><td>Ceres 🇬🇧</td><td>SteelCell V5/V6</td><td>—</td><td>~100 cm²</td><td>5~10</td><td>1 MW SOEC</td><td>—</td><td>500~600</td><td>내부</td><td>260 MW+/년</td></tr>
+        <tr><td>Elcogen 🇪🇪</td><td>E1000 / E3000</td><td>39 / 119</td><td>81 cm²</td><td>1 / 3</td><td>OEM 공급</td><td>—</td><td>≤720</td><td>내부</td><td><strong>360 MW/년</strong></td></tr>
+        <tr><td>CCTC 🇨🇳</td><td>1·1.5·35 kW</td><td>—</td><td>—</td><td>1~35</td><td>35 kW (210 검증)</td><td>>65% / 89% CHP</td><td>—</td><td>—</td><td>대량</td></tr>
+        <tr><td>Huatsing 🇨🇳</td><td>평판형 SOFC</td><td>—</td><td>~100 cm²</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>20만 셀/년→100만</td></tr>
+        <tr><td>두산퓨얼셀 🇰🇷</td><td>Ceres 기반</td><td>—</td><td>~100 cm²</td><td>—</td><td>300 kW</td><td>58%</td><td>620</td><td>내부</td><td>50 MW/년</td></tr>
+        <tr><td>미코파워 🇰🇷</td><td>TUCY-Q150</td><td>수십</td><td>~100 cm²</td><td>25</td><td>2/8/150 kW</td><td>51~59% / 96~98% 종합</td><td>700~750</td><td>—</td><td>2→100 MW/년</td></tr>
+        <tr><td>Weichai 🇨🇳</td><td>Ceres 라이선스</td><td>—</td><td>~100 cm²</td><td>—</td><td>25 / 100 kW</td><td>—</td><td>500~600</td><td>내부</td><td>Shandong 세계 최대급</td></tr>
+        <tr><td>범한퓨얼셀 🇰🇷</td><td>10 kW SOFC</td><td>—</td><td>—</td><td>10</td><td>—</td><td>60%+ 목표</td><td>—</td><td>—</td><td>2026 개발 완료</td></tr>
+        <tr><td>SK에코플랜트 🇰🇷</td><td>Bloom SK Fuel Cell</td><td>—</td><td>100 cm²</td><td>—</td><td>200~300 kW</td><td>53~65%</td><td>800~850</td><td>내부</td><td>국내 380 MW 수주</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ SOEC 비교표 ============ -->
+<section class="comparison" id="soec-comparison" style="background: #1c1c1e;">
+  <div class="section-header">
+    <h2>SOEC / 가역 SOC 비교</h2>
+    <p>전해 모듈 사양·시스템 출력·양산 능력</p>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>제조사</th><th>모듈</th><th>스택 구성</th><th>유효면적</th><th>시스템</th><th>효율 LHV</th><th>운전 °C</th><th>운전 P</th><th>양산 능력</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Topsoe 🇩🇰</td><td>SOEC core/section</td><td>12 stacks/core × 8</td><td>~150 cm²</td><td>350 kW(core) ~ MW</td><td>93%</td><td>700~750</td><td>3.5 bar</td><td><strong>500 MW/년</strong></td></tr>
+        <tr><td>Sunfire 🇩🇪</td><td>HyLink GEN3</td><td>대형 평판</td><td>—</td><td>10 MW/모듈</td><td>89% (AC)</td><td>~800</td><td>—</td><td><strong>500 MW/년</strong></td></tr>
+        <tr><td>Ceres 🇬🇧</td><td>SOEC V6</td><td>—</td><td>~100 cm²</td><td>1 MW 시제</td><td>—</td><td>500~600</td><td>상압</td><td>260 MW+/년</td></tr>
+        <tr><td>FuelCell Energy 🇺🇸</td><td>HiPoD CSA / INL</td><td>—</td><td>—</td><td>250 kW → 150 kg-H₂/d</td><td>~90% (열통합 100%)</td><td>750</td><td>상압</td><td><strong>100→350 MW/년</strong></td></tr>
+        <tr><td>OxEon 🇺🇸</td><td>25 kW 모듈</td><td>1~4 stacks</td><td>300 cm²</td><td>5 / 25 kW</td><td>—</td><td>750</td><td>상압</td><td>파일럿→25 MW/년</td></tr>
+        <tr><td>Bloom 🇺🇸</td><td>Electrolyzer</td><td>—</td><td>100 cm²</td><td>500~1,500 kW</td><td>88.5% (NASA)</td><td>800~850</td><td>가압 가능</td><td><strong>1→2 GW/년 통합</strong></td></tr>
+        <tr><td>SolydEra 🇮🇹</td><td>G8X-10</td><td>1 stack</td><td>~324 cm²</td><td>25 kW SOE</td><td>—</td><td>650~800</td><td>—</td><td>75 MW/년</td></tr>
+        <tr><td>Elcogen 🇪🇪</td><td>E3000 / AVL MW</td><td>119</td><td>81 cm²</td><td>3 kW / MW급</td><td>—</td><td>≤720</td><td><50 mbar</td><td>360 MW/년</td></tr>
+        <tr><td>SPIC 🇨🇳</td><td>Da'an P2X</td><td>—</td><td>—</td><td>800 MW (풍·태양)</td><td>—</td><td>—</td><td>—</td><td>2025-07 첫 H₂ 생산</td></tr>
+        <tr><td>포스코 🇰🇷</td><td>20 kW 스택</td><td>—</td><td>—</td><td>20 kW</td><td>83.3% (시스템)</td><td>—</td><td>—</td><td>R&D</td></tr>
+        <tr><td>KIER 🇰🇷</td><td>단스택 R&D</td><td>—</td><td>81 cm²</td><td>8 kW</td><td>—</td><td>750</td><td>1 atm</td><td>분리판 1,000매/일</td></tr>
+        <tr><td>Sinopec 🇨🇳</td><td>Zhongyuan 파일럿</td><td>—</td><td>—</td><td>100 kW SOEC</td><td>—</td><td>—</td><td>—</td><td>H₂ 4.45 Mt/년 (세계최대)</td></tr>
+        <tr><td>범한퓨얼셀 🇰🇷</td><td>국산 ZrO₂ SOEC</td><td>—</td><td>—</td><td>R&D</td><td>—</td><td>—</td><td>—</td><td>국책 주관</td></tr>
+        <tr><td>SK에코플랜트 🇰🇷</td><td>Bloom Electrolyzer</td><td>—</td><td>100 cm²</td><td>—</td><td>—</td><td>800~850</td><td>가압 가능</td><td>국내 첫 SOEC 실증</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 제조사별 개발 히스토리 (맨 아래) ============ -->
+<div class="section-header" id="history">
+  <h2>제조사별 개발 히스토리</h2>
+  <p>스택 진화 + 양산 능력 + 성능 변화 (웹·논문·특허 종합)</p>
+</div>
+
+<section class="history-section">
+  <div class="history-tabs" id="historyTabs"></div>
+  <div class="history-content" id="historyContent"></div>
+</section>
+
+<footer id="sources">
+  <p>Generated by Claude Code AI Agent · Apple-style Dashboard</p>
+  <p style="margin-top: 8px;">Data sources: 22 manufacturer official sites + manufacturing capacity press releases</p>
+  <p style="margin-top: 16px;">Last updated <strong>2026-05-19</strong> · v2 갱신 완료 · Auto-update every Monday</p>
+</footer>
+
+<script>
+// 지역 탭 필터
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const region = btn.dataset.region;
+    document.querySelectorAll('.mfr-card').forEach(card => {
+      if (region === 'all' || card.dataset.region === region) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+  });
+});
+
+// ===== 제조사별 개발 히스토리 데이터 =====
+const LATEST_PHOTOS = {
+  bloom:    "https://upload.wikimedia.org/wikipedia/commons/f/f8/Bloom_Energy_Servers_at_eBay_HQ_-_4405533596.jpg",
+  topsoe:   "https://www.topsoe.com/hs-fs/hubfs/Solution_level_soec_stack_image_5.jpg",
+  sunfire:  "https://backend.sunfire.de/wp-content/uploads/2024/09/sunfire-soec.png",
+  elcogen:  "https://elcogen.com/wp-content/uploads/2026/04/elcostack.avif",
+  ceres:    "https://www.ceres.tech/media/2r3l31op/mg-1404-ceres-stack-no-bg.png",
+  solydera: "https://www.solydera.com/media/12xj0rrt/g8_only-stack_3-4_uncovered_black-600x0-c-default.jpg",
+  doosan:   "https://www.ceres.tech/media/3fxhncoc/doosan-factory-image-may-2024.jpeg",
+  fuelcellenergy: "https://www.fuelcellenergy.com/hs-fs/hubfs/fuel-cell-manufacturer-usa-torrington.jpg",
+  huatsing: "",
+  micopower: "https://www.micopower.com/images/main/sofc_product_item01_01.png"
+};
+
+const HISTORY_DATA = [
+  {id:"bloom",name:"Bloom Energy",country:"🇺🇸 USA",latestModel:"ES 6.5 / Hydrogen SOFC (2024)",latestPerf:"325 kW 모듈 · 효율 53~65% LHV · H₂/NG/Biogas fuel-flexible",
+    milestones:[
+      {year:"2001",model:"Ion America (창립)",specs:"K.R. Sridhar의 NASA 화성탐사 산소생성 기술에서 출발",performance:"R&D 단계",sourceType:"웹",sourceUrl:"https://en.wikipedia.org/wiki/Bloom_Energy"},
+      {year:"2008",model:"ES-5000 (1세대 상용)",specs:"100 kW 모듈, ASC 평판 셀, Google 사이트에 첫 상용 출하",performance:"전기 효율 ~50% LHV",sourceType:"웹",sourceUrl:"https://en.wikipedia.org/wiki/Bloom_Energy_Server"},
+      {year:"2010",model:"ES-5700",specs:"200 kW 모듈, 단셀 ~25 W, 스택 ~1 kW급 (eBay·Walmart 도입)",performance:"전기 효율 50~60% LHV",sourceType:"웹",sourceUrl:"https://www.goldenstateenergy.com/files/Bloomenergy%20DataSheet%20ES-5700.pdf"},
+      {year:"2018",model:"Energy Server 5 (ES5)",specs:"250 kW 모듈, 단일 모듈 다중 cube 구성",performance:"전기 효율 65~53% LHV",sourceType:"웹",sourceUrl:"https://www.bloomenergy.com/datasheets/energy-server-es5-250kw"},
+      {year:"2023",model:"Bloom Electrolyzer (SOEC)",specs:"NASA Ames Moffett Field에 4 MW SOEC 설치, 세계 최대 SO 전해 시설",performance:"37.7 kWh/kg-H₂, 88.5% LHV; 2.4 t/day H₂",sourceType:"웹",sourceUrl:"https://www.bloomenergy.com/news/bloom-energy-demonstrates-hydrogen-production-with-the-worlds-most-efficient-electrolyzer-and-largest-solid-oxide-system/"},
+      {year:"2024",model:"Energy Server 6.5",specs:"325 kW 모듈, 480/415/400/380 V 3상, 14,484 kg",performance:"전기 효율 65~53% LHV, fuel-flexible",sourceType:"웹",sourceUrl:"https://www.bloomenergy.com/wp-content/uploads/bloom-energy-server-datasheet-2024.pdf"},
+      {year:"2024",model:"Hydrogen SOFC",specs:"100% H₂ 연료 SOFC 발표",performance:"전기 효율 60%, 고온 CHP 효율 90%",sourceType:"웹",sourceUrl:"https://www.bloomenergy.com/news/bloom-energy-announces-hydrogen-solid-oxide-fuel-cell-with-60-electrical-efficiency-and-90-high-temperature-combined-heat-and-power-efficiency/"},
+      {year:"2025-12",model:"Brookfield AI 파트너십",specs:"Brookfield와 $5B AI 인프라 전략적 파트너십 체결",performance:"AI 데이터센터 SOFC 공급 확대",sourceType:"웹",sourceUrl:"https://investor.bloomenergy.com/press-releases/press-release-details/2025/Brookfield-and-Bloom-Energy-Announce-5-Billion-Strategic-AI-Infrastructure-Partnership/default.aspx"},
+      {year:"2026-01",model:"AEP $2.65B / 1 GW",specs:"American Electric Power와 최대 1 GW SOFC 공급 협약, 초기 100 MW 발주",performance:"$2.65B 규모, 데이터센터·전력망 전력 공급",sourceType:"웹",sourceUrl:"https://fuelcellsworks.com/2026/01/08/electrolyzer/american-electric-power-locks-in-2-65bn-deal-to-deploy-up-to-1gw-of-bloom-energy-fuel-cells"},
+      {year:"2026-04",model:"Oracle 2.8 GW + 2 GW 양산 확대",specs:"Oracle 협약 2.45→2.8 GW 확대(초기 1.2 GW 계약), 양산 1→2 GW/년 확대 ($100M)",performance:"세계 최대 SOFC 양산능력 유지",sourceType:"웹",sourceUrl:"https://investor.bloomenergy.com/press-releases/press-release-details/2026/Bloom-Energy-and-Oracle-Expand-Strategic-Partnership-to-Deploy-up-to-2-8-GW-to-Accelerate-AI-Infrastructure-Build-Out/default.aspx"}
+    ]},
+  {id:"topsoe",name:"Topsoe",country:"🇩🇰 Denmark",latestModel:"Herning 500 MW Factory (2025)",latestPerf:"500 MW/년 SOEC 양산 · 코어 효율 ~93% · 5 MW → 500 MW (100배 스케일업)",
+    milestones:[
+      {year:"1989",model:"SOFC R&D 개시",specs:"Haldor Topsoe SOFC 기초연구 개시",performance:"기초연구 단계",sourceType:"웹",sourceUrl:"https://www.topsoe.com/about/history"},
+      {year:"2012",model:"SOEC focus shift",specs:"공정형 SOEC 연구 본격화 (eCOs CO₂ 환원 기술 포함)",performance:"단셀 단계",sourceType:"웹",sourceUrl:"https://www.topsoe.com/blog/from-vision-to-reality-five-pivotal-years-in-the-history-of-topsoes-soec"},
+      {year:"2022",model:"First Ammonia 협약 + 5MW Pilot",specs:"First Ammonia와 SOEC 협력, Frederikssund 5 MW 시범",performance:"~90% 효율 목표",sourceType:"웹",sourceUrl:"https://firstammonia.com/technology/"},
+      {year:"2024",model:"Frederikssund 데모",specs:"12 SOEC 스택 × 100셀 = 1,200셀, 350 kW 결합 출력",performance:"2,250 시간 안정, 코어 효율 ~93%",sourceType:"웹",sourceUrl:"https://www.topsoe.com/press-releases/topsoes-electrolyzer-demonstration-plant-delivers-strong-results"},
+      {year:"2024",model:"First Ammonia 100 MW 공급계약",specs:"Texas 그린 암모니아 플랜트용 100 MW SOEC 모듈",performance:"300 t/day 그린 NH₃ 목표",sourceType:"웹",sourceUrl:"https://firstammonia.com/technology/"},
+      {year:"2025",model:"Herning 500 MW Factory",specs:"23,000 m² SOEC 스택 양산공장 가동 (10/30 준공)",performance:"연 500 MW (5 GW 확장 가능), EU €94M 지원",sourceType:"웹",sourceUrl:"https://www.topsoe.com/news/topsoe-inaugurates-europes-largest-soec-manufacturing-facility"},
+      {year:"2026",model:"Forestal Triskelion e-methanol (55 MW)",specs:"55 MW SOEC + 통합 H₂-to-methanol 경로(중간 수소 저장 없음), Galicia 스페인 e-메탄올 프로젝트. 10년 서비스 보증",performance:"기존 전해 대비 효율 +최대 30%, e-메탄올 57,000 t/년·CO₂ 78,000 t/년 활용. FID Q2 2026, 2028 가동",sourceType:"웹",sourceUrl:"https://www.topsoe.com/news/forestal-selects-topsoes-breakthrough-soec-technology-for-e-methanol-production"}
+    ]},
+  {id:"sunfire",name:"Sunfire",country:"🇩🇪 Germany",latestModel:"HyLink Alkaline 23 / 50 MW (2026)",latestPerf:"50 MW 모듈 · 30-bar 가압 스택 · 설치비용 50% 절감",
+    milestones:[
+      {year:"2016",model:"GrInHy Project (1세대)",specs:"Salzgitter Flachstahl과 첫 SOEC 산업 시범",performance:"kW급 시범",sourceType:"웹",sourceUrl:"https://salcos.salzgitter-ag.com/en/grinhy-20.html"},
+      {year:"2019",model:"GrInHy 2.0 SOEC GEN 1",specs:"30 RU 'rainbow' 스택, 36스택/모듈 = 137 kW",performance:"효율 84% LHV-AC (목표 20,000 h)",sourceType:"웹",sourceUrl:"https://www.h2-view.com/story/sunfire-achieves-major-milestone-with-second-generation-soec/"},
+      {year:"2020",model:"Salzgitter 720 kW HTE",specs:"세계 최대 SOEC 시스템 인도, 850 °C 운전",performance:"14,500 h 운전 후 분해율 23 mΩ·cm²/kh",sourceType:"웹",sourceUrl:"https://sunfire.de/en/news/grinhy2-0-sunfire-delivers-the-worlds-largest-high-temperature-electrolyzer-to-salzgitter-flachstahl/"},
+      {year:"2023",model:"HyLink SOEC GEN 2",specs:"60스택/모듈 = 1,800셀, 225 kW, 모듈풋프린트 34×7.5 m",performance:"효율 84% LHV, 12 모듈 → 2.7 MW 시스템",sourceType:"웹",sourceUrl:"https://sunfire.de/en/news/successful-test-operation-of-the-worlds-largest-high-temperature-electrolysis-module/"},
+      {year:"2024",model:"MultiPLHY 2.6 MW",specs:"Neste Rotterdam 정유소용 SOEC 가동",performance:"산업급 시범",sourceType:"웹",sourceUrl:"https://multiplhy-project.eu/"},
+      {year:"2026-01",model:"스페인 200 MW 알칼라인 수주",specs:"Repsol/Enagás Cartagena 100 MW + Petronor Muskiz 100 MW (가동 2029)",performance:"수주잔고 1,000 MW+ 돌파",sourceType:"웹",sourceUrl:"https://sunfire.de/en/news/sunfire-secures-200-mw-electrolyzer-orders-in-spain/"},
+      {year:"2026-04",model:"HyLink Alkaline 23 (50 MW)",specs:"50 MW 단일 모듈 정식 출시(2세대 30-bar 가압 스택). 10 MW × 10 → 50 MW × 2 구성으로 100 MW 시스템 모듈 수 -80%",performance:"설치비 최대 -50%",sourceType:"웹",sourceUrl:"https://sunfire.de/en/news/sunfire-launches-new-50-megawatt-electrolyzer-system-for-the-next-phase-of-industrial-green-hydrogen-scale-up/"}
+    ]},
+  {id:"elcogen",name:"Elcogen",country:"🇪🇪 Estonia",latestModel:"ELCO I 공장 + E3000 G2 (2025)",latestPerf:"360 MW/년 (SOFC 50 + SOEC 200) · 14,000 m² 신공장",
+    milestones:[
+      {year:"2001",model:"Elcogen 창립",specs:"Enn Õunpuu CEO, 영국 본사 + 에스토니아 탈린 운영본부",performance:"초기 R&D",sourceType:"웹",sourceUrl:"https://elcogen.com/elcogen-in-brief/"},
+      {year:"2014",model:"단셀 상용화",specs:"ASC 단셀 (~50 cm² 활성면적) 외부공급 개시",performance:"전류밀도 0.5~0.8 A/cm² @0.7V",sourceType:"웹",sourceUrl:"https://investinestonia.com/estonian-startup-elcogen-to-power-the-future-with-hydrogen/"},
+      {year:"2019",model:"elcoStack E1000",specs:"39셀, 1,000 W 정격 출력, ASC 평판",performance:"효율 >70% LHV (FC), 39 kWh/kg-H₂ (EC)",sourceType:"웹",sourceUrl:"https://elcogen.com/products/solid-oxide-stack-modules/"},
+      {year:"2022",model:"elcoStack E3000 G1",specs:"119셀, 3,000 W 정격, 동일 풋프린트",performance:"효율 >75% LHV (FC), 33 kWh/kg-H₂ (EC)",sourceType:"웹",sourceUrl:"https://elcogen.com/wp-content/uploads/2024/01/Elcogen_tooteleht_A4bleed_72dpi_2022.pdf"},
+      {year:"2024",model:"Ülemiste City 50 MW 합의",specs:"Ülemiste City와 50 MW SOFC 셀·스택 제조시설 합의",performance:"초기 양산능력",sourceType:"웹",sourceUrl:"https://elcogen.com/elcogen-signs-agreement-with-ulemiste-city-to-develop-50-mw-solid-oxide-fuel-cell-and-stack-manufacturing-facility/"},
+      {year:"2025",model:"ELCO I 공장 + E3000 G2",specs:"14,000 m² 신공장 가동 (9/17), E3000 G2 양산 개시",performance:"SOFC 50 MW/년 + SOEC 200 MW/년 (10→360 MW)",sourceType:"웹",sourceUrl:"https://elcogen.com/elcogen-launches-new-high-volume-solid-oxide-fuel-cell-factory-in-europe-to-meet-global-demand-for-clean-energy-solutions/"},
+      {year:"2025",model:"E3000 Generation 2",specs:"G1과 동일 풋프린트로 mass-manufacturing 최적화",performance:"동일 효율 유지, 비용 저감",sourceType:"논문",sourceUrl:"https://www.researchgate.net/publication/397913367_Introduction_to_Elcogen_elcoStack_R_E3000_Generation_2_Solid_Oxide_Technology"},
+      {year:"2026",model:"2035년 30 GW/년 로드맵 + EU IF €25M",specs:"공식 로드맵 1 GW → 2035년 30 GW/년으로 확장 발표. EU Innovation Fund €25M 추가 약정(ELCO I 추가 확장용)",performance:"장기 양산 목표 30배 상향",sourceType:"웹",sourceUrl:"https://elcogen.com/elco-i-if-project/"}
+    ]},
+  {id:"ceres",name:"Ceres Power",country:"🇬🇧 UK",latestModel:"Doosan SoP 양산 개시 (2025)",latestPerf:"세계 첫 metal-supported SOFC 양산 · 라이선스 모델 글로벌 확산",
+    milestones:[
+      {year:"2001",model:"Imperial 스핀아웃",specs:"Imperial College Brian Steele 연구 기반 스핀아웃 (7월 설립)",performance:"초기 SteelCell 컨셉",sourceType:"웹",sourceUrl:"https://www.ceres.tech/about-us/history/"},
+      {year:"2004",model:"LSE 상장",specs:"런던증권거래소 상장 (11월)",performance:"공공자금 조달",sourceType:"웹",sourceUrl:"https://en.wikipedia.org/wiki/Ceres_Power"},
+      {year:"2018",model:"Bosch 협력 시작",specs:"Bosch와 SteelCell 시범 스택 공동개발",performance:"1 kW급 모듈 프로토타입",sourceType:"웹",sourceUrl:"https://www.bosch-presse.de/pressportal/de/en/press-release-206400.html"},
+      {year:"2019",model:"Weichai 30 kW SOFC",specs:"중국 Weichai 전기버스용 30 kW Range Extender",performance:"세계 첫 SOFC 버스 필드테스트",sourceType:"웹",sourceUrl:"https://www.proactiveinvestors.co.uk/companies/news/191846/"},
+      {year:"2020",model:"Doosan JDA + SteelCell v3",specs:"Doosan Fuel Cell과 공동개발 협약 (10월), Bosch 지분 17.6%",performance:"스테이셔너리 200 MW 양산 계획",sourceType:"웹",sourceUrl:"https://www.ceres.tech/newsroom/news-and-insights/doosan-fuel-cell-begins-mass-production-of-fuel-cell-power-systems-using-ceres-technology/"},
+      {year:"2023",model:"SteelCell v4.0",specs:"표준 4세대 SteelCell, 단순화된 저비용 제조공정",performance:"Miura 4.2 kW eCHP 일본 상용 출시",sourceType:"웹",sourceUrl:"https://www.ceres.tech/technology-licensing/markets/ceres-power/"},
+      {year:"2024",model:"SOEC 라이선스 + Shell 1 MW",specs:"장기 SOEC 스택생산 파트너 확보, Shell 인도 1 MW SOEC",performance:"Delta £43M, DENSO, Thermax 계약",sourceType:"웹",sourceUrl:"https://www.pv-magazine.com/2024/01/19/the-hydrogen-stream-ceres-secures-license-agreement-for-soec-stack-production/"},
+      {year:"2025",model:"Doosan SoP 양산 개시",specs:"Doosan Saemangeum 50 MW 공장 가동 (7월)",performance:"세계 첫 metal-supported SOFC 양산",sourceType:"웹",sourceUrl:"https://www.ceres.tech/media/1ppfrodd/external_ceres-power-doosan-sop-announcement-20250728-final.pdf"},
+      {year:"2026",model:"Delta 라이선스 생산 개시 확정",specs:"대만 Delta Electronics Tainan 공장, 2024~2026 제품 개발/라인 통합 → 2026년 말 초기 생산 개시",performance:"용량 미공시(공식 자료 기준)",sourceType:"웹",sourceUrl:"https://www.ceres.tech/news/delta-secures-license-to-hydrogen-energy-technology-from-uk-listed-ceres-to-develop-its-fuel-cell-and-electrolysis-solutions/"}
+    ]},
+  {id:"solydera",name:"SolydEra (구 SOLIDpower)",country:"🇮🇹 Italy",latestModel:"G8X-10 스택 (2025)",latestPerf:"10 kW SOFC / 25 kW SOEC · MW급 시스템 통합 ECA 모듈",
+    milestones:[
+      {year:"2006",model:"SOLIDpower 창립",specs:"이탈리아 메조롬바르도(Mezzolombardo) 설립",performance:"초기 R&D",sourceType:"웹",sourceUrl:"https://www.solydera.com/en/the-company/"},
+      {year:"2008",model:"첫 SOFC 생산설비",specs:"메조롬바르도 첫 셀·스택 양산공장 가동",performance:"초기 m-CHP 시제품",sourceType:"웹",sourceUrl:"https://www.solydera.com/en/the-company/"},
+      {year:"2015",model:"CFCL Heinsberg 인수",specs:"독일 CFCL → BlueGEN 라인업 통합 (HTceramix 2007 이은 통합)",performance:"BlueGEN 1.5 kW m-CHP",sourceType:"웹",sourceUrl:"https://en.wikipedia.org/wiki/Solid_oxide_fuel_cell"},
+      {year:"2018",model:"Bosch 상용계약",specs:"BlueGEN 상용공급, 17개국 3,000+대 설치",performance:"전기 60%, 종합 85%+ (60M h 누적)",sourceType:"웹",sourceUrl:"https://www.solydera.com/en/the-company/"},
+      {year:"2019",model:"BlueGEN BG-15",specs:"1.5 kW SOFC m-CHP, 1,000+대 시장 보급",performance:"전기 57%, 종합 89%, 13,000 kWh/년",sourceType:"웹",sourceUrl:"https://bluegen.eu/wp-content/uploads/2022/09/Brochure_Bluegen_ENG_2022-09_v3_acc.pdf"},
+      {year:"2022",model:"SolydEra 리브랜드",specs:"SOLIDpower → SolydEra, Pergine Valsugana 신본사",performance:"수소경제 전환 전략",sourceType:"웹",sourceUrl:"https://www.hydronews.it/en/nuova-strategia-e-nuovo-nome-per-solidpower-che-diventa-solydera/"},
+      {year:"2023",model:"G8 스택 출시",specs:"8 kW SOFC / 25 kW SOE 스택, BlueGEN PRO",performance:"5배 수명 향상 (Dynelectro AC:DC), 15개월 검증",sourceType:"웹",sourceUrl:"https://www.solydera.com/media/xmzfgthh/solydera_flyer_g8-stack_sept-2023_web.pdf"},
+      {year:"2025",model:"G8X-10 스택",specs:"Hannover Messe 2025 신모델, MW급 시스템 통합",performance:"전해 어레이 (ECA) 모듈 출시",sourceType:"웹",sourceUrl:"https://www.hannovermesse.de/product/stack-g8x-10/460858/N1569079"},
+      {year:"2025",model:"Dynelectro 1 MW SOEC",specs:"덴마크 Dynelectro와 1 MW SOEC AC:DC 운전모드 협력",performance:"기존 SOEC 대비 스택 수명 5배 향상 목표",sourceType:"웹",sourceUrl:"https://www.hydrogen-worldexpo.com/industry-news/1mw-solid-oxide-electrolyser-deployed-solydera-dynelectro-2025"},
+      {year:"2026",model:"데이터센터 전용 SOFC 시스템",specs:"데이터센터향 90 kW SOFC 시험 완료, 최대 60% 효율",performance:"고밀도 AI 인프라 전력 공급용 신제품",sourceType:"웹",sourceUrl:"https://www.solydera.com/en/solydera-achieved-major-breakthrough-in-fuel-cell-technology-for-data-centres/"}
+    ]},
+  {id:"doosan",name:"두산퓨얼셀",country:"🇰🇷 Korea",latestModel:"Ceres SOFC 양산 개시 (2025)",latestPerf:"50 MW/년 새만금 공장 · Ceres 라이선스 첫 양산 파트너",
+    milestones:[
+      {year:"2014",model:"두산 PAFC 사업 진출",specs:"ClearEdge Power 인수 → PAFC 사업 진출",performance:"PAFC 440 kW PureCell 모델 (UTC 기반)",sourceType:"웹",sourceUrl:"https://en.wikipedia.org/wiki/Doosan_Fuel_Cell"},
+      {year:"2019",model:"두산퓨얼셀 분할 상장",specs:"두산 코퍼레이션에서 별도 분할, 코스피 상장",performance:"PAFC M400 (440 kW) 양산",sourceType:"웹",sourceUrl:"https://en.wikipedia.org/wiki/Doosan_Fuel_Cell"},
+      {year:"2020",model:"Ceres SOFC JDA",specs:"Ceres Power와 SOFC 공동개발 협약 (10월)",performance:"metal-supported SOFC 기술 도입",sourceType:"웹",sourceUrl:"https://www.ceres.tech/newsroom/news-and-insights/doosan-fuel-cell-begins-mass-production-of-fuel-cell-power-systems-using-ceres-technology/"},
+      {year:"2022",model:"새만금 공장 착공",specs:"전북 군산 새만금 산업단지 SOFC 공장 건설 시작",performance:"50 MW/년 SOFC 양산능력 목표",sourceType:"웹",sourceUrl:"https://www.globenewswire.com/news-release/2025/07/28/3122167/"},
+      {year:"2023",model:"신인천 빛드림 50 MW PAFC",specs:"세계 최대 PAFC 발전소 가동",performance:"PAFC 시장 지배력 강화",sourceType:"웹",sourceUrl:"https://enkiai.com/fuel-cells/"},
+      {year:"2024",model:"새만금 50 MW SOFC 공장 완공",specs:"세계 첫 Ceres metal-supported SOFC 양산공장",performance:"Shell·HHI와 해상 SOFC 시범",sourceType:"웹",sourceUrl:"https://enkiai.com/fuel-cells/"},
+      {year:"2025",model:"Ceres SOFC 양산 개시",specs:"7/28 공식 양산 시작, Ceres 라이선스 첫 파트너",performance:"2025 말 첫 출하 예상 · Samchully MOU",sourceType:"웹",sourceUrl:"https://www.ceres.tech/media/1ppfrodd/external_ceres-power-doosan-sop-announcement-20250728-final.pdf"},
+      {year:"2026",model:"해외 수주 가속 + Hyaxiom",specs:"2026 연간 수주 목표 160~170 MW, 독일·미국·싱가포르 3개사 공급 협의. 미국 자회사 Hyaxiom 통해 AI 데이터센터향 수주 추진",performance:"Q1 미국 데이터센터 계약 기대, Q2 해외 SOFC 공급 계약 기대",sourceType:"웹",sourceUrl:"https://www.creditnews.kr/news/articleView.html?idxno=1717"}
+    ]},
+  {id:"fuelcellenergy",name:"FuelCell Energy",country:"🇺🇸 USA",latestModel:"INL SOEC Test (2025)",latestPerf:"Idaho National Lab SOEC 통합 시험 · 효율 ~90% (열통합 시 100%)",
+    milestones:[
+      {year:"1969",model:"Energy Research Corp (ERC)",specs:"Bernard Baker 창립, 코네티컷 댄버리 본사",performance:"MCFC 기초연구",sourceType:"웹",sourceUrl:"https://en.wikipedia.org/wiki/FuelCell_Energy"},
+      {year:"1996",model:"Santa Clara DFC 2 MW",specs:"Santa Clara 시 그리드 연계 2 MW DFC (MCFC) 가동",performance:"최초 상용 규모 MCFC",sourceType:"웹",sourceUrl:"https://en.wikipedia.org/wiki/FuelCell_Energy"},
+      {year:"1999",model:"FuelCell Energy 리브랜드",specs:"ERC → FuelCell Energy, DFC 상용화",performance:"MCFC 양산체제 진입",sourceType:"웹",sourceUrl:"https://en.wikipedia.org/wiki/FuelCell_Energy"},
+      {year:"2018",model:"CSA 45-cell 스택",specs:"Compact Solid Oxide Architecture 45셀 SOFC 스택 시연",performance:"고비강도 500 W/kg (FC) / 2,000+ W/kg (EC)",sourceType:"논문",sourceUrl:"https://www.osti.gov/servlets/purl/1513461/"},
+      {year:"2019",model:"150-cell SOEC 스택",specs:"300 µm HiPoD 셀 기반 150셀 SOEC, ~3,000 h 운전",performance:"5.5 kg/day H₂ 생산",sourceType:"논문",sourceUrl:"https://www.osti.gov/servlets/purl/1874500"},
+      {year:"2023",model:"Toyota Tri-gen (Long Beach)",specs:"MCFC 트라이젠: 2.3 MW 전력 + 1,200 kg/day H₂ + 물",performance:"Port of Long Beach 가동",sourceType:"웹",sourceUrl:"https://www.fuelcellenergy.com/applications/solid-oxide-electrolysis"},
+      {year:"2024",model:"HiPoD 17,051 h 운전",specs:"1 A/cm²에서 거의 2년 연속 운전, HiPoD 셀",performance:"분해율 39 mV/1,000 h (3%/1,000 h)",sourceType:"논문",sourceUrl:"https://netl.doe.gov/sites/default/files/netl-file/22SOFC_Hossein_25.pdf"},
+      {year:"2025",model:"INL SOEC Test",specs:"Idaho National Lab 통합 SOEC 시스템 시험",performance:"효율 ~90% (열통합 100%), 200 MW 시스템 목표",sourceType:"웹",sourceUrl:"https://investor.fce.com/press-releases/press-release-details/2025/"},
+      {year:"2026-03",model:"12.5 MW Power Block + Torrington 확장",specs:"데이터센터향 12.5 MW 표준 패키지 Power Block 출시. 제조 거점 Torrington CT 100→350 MW/년 (3배+) 확대 계획 발표",performance:"Q1 FY26 매출 $30.5M (+61% YoY), 파이프라인 +275%, 현금 $379.6M",sourceType:"웹",sourceUrl:"https://www.globenewswire.com/news-release/2026/03/23/3260279/8041/en/FuelCell-Energy-Scales-Up-for-Data-Centers-with-Packaged-12-5-MW-Utility-Grade-Power-Block-Solution-and-Manufacturing-Expansion-Plans.html"}
+    ]},
+  {id:"huatsing",name:"Huatsing 苏州华清京昆",country:"🇨🇳 China",latestModel:"확장 양산능력 (2024)",latestPerf:"SOFC 시스템 1,000세트/년 · 셀 100만/년 + 스택 4만/년",
+    milestones:[
+      {year:"2010",model:"Suzhou Huatsing 창립",specs:"Peng Suping (CAE) + Han Minfang (칭화대) 주도, 2010년 2월 설립",performance:"초기 SOFC 핵심소재 R&D",sourceType:"웹",sourceUrl:"https://sofc-fuelcell.sell.everychina.com/aboutus.html"},
+      {year:"2015",model:"단셀·버튼셀 상용공급",specs:"버튼셀 + 산업용 셀 외부 공급 시작",performance:"기초연구→상용 전환",sourceType:"논문",sourceUrl:"https://advanced.onlinelibrary.wiley.com/doi/full/10.1002/aenm.202403869"},
+      {year:"2018",model:"Xuzhou Huatsing Jingkun 설립",specs:"쉬저우 경제기술개발구, 등록자본 2억 위안",performance:"양산공장 인프라",sourceType:"웹",sourceUrl:"https://www.fuelcellchina.com/Enterprise_details/1670678719291740160.html"},
+      {year:"2020",model:"10 kW SOFC-CHP 시범",specs:"syngas 기반 10 kW SOFC-CHP, 칭화대 공동연구",performance:"내부개질 평판 SOFC 검증",sourceType:"논문",sourceUrl:"https://link.springer.com/article/10.1007/s40789-021-00451-3"},
+      {year:"2021",model:"Xuzhou 자동 양산라인",specs:"중국 첫 자동화 SOFC 양산라인, 3개 생산기지",performance:"초기 셀 20만/년, 시스템 200세트/년",sourceType:"웹",sourceUrl:"https://www.hannovermesse.de/apollo/hannover_messe_2024/obs/Binary/A1345644/Xuzhou%20Huatsing-202308v1.pdf"},
+      {year:"2023",model:"확장 양산능력",specs:"전체 능력 셀 100만/년, 스택 4만/년, 개질기 1,500/년",performance:"100 kW급 해상 SOFC 시스템 (해군 협력)",sourceType:"웹",sourceUrl:"https://www.takomabattery.com/sofc-manufacturers-in-china/"},
+      {year:"2024",model:"1,000 시스템/년 목표",specs:"SOFC 발전시스템 1,000 세트/년 양산능력",performance:"산업급 평판 SOFC 통합",sourceType:"웹",sourceUrl:"https://www.takomabattery.com/sofc-manufacturers-in-china/"}
+    ]},
+  {id:"micopower",name:"미코파워",country:"🇰🇷 Korea",latestModel:"100 kW SOEC + Meritz 400억 투자 (2026)",latestPerf:"SOEC 분야 국가 R&D 주관 · 2027 상반기 시범운전",
+    milestones:[
+      {year:"2013",model:"MiCo SOFC 사업 진출",specs:"MiCo Ltd. 자회사로 미코파워 설립, 안성 R&D",performance:"초기 R&D",sourceType:"웹",sourceUrl:"https://www.mico.kr/en/business/sofc.php"},
+      {year:"2018",model:"TUCY 2 kW SOFC",specs:"가정용 2 kW TUCY 시제품, 직접수소 KGS 인증",performance:"전기 효율 ~50% LHV",sourceType:"웹",sourceUrl:"https://micopower.com/en/sofc/tucy_intro.php"},
+      {year:"2019",model:"TUCY 8 kW + 안성공장",specs:"8 kW SOFC 시스템, 안성 공장 1 MW/년 완공",performance:"초기 양산능력",sourceType:"웹",sourceUrl:"https://www.micopower.com/en/"},
+      {year:"2020",model:"TUCY-50 / TUCY-100",specs:"50~100 kW급 발전용 SOFC 출시",performance:"한국 SOFC 첫 발전용 인증 추진",sourceType:"웹",sourceUrl:"https://www.mico.kr/en/business/sofc.php"},
+      {year:"2022",model:"Korea Energy Award",specs:"산업통상자원부 장관상 (수소경제 활성화)",performance:"직접수소 TUCY H 2kW KGS 인증",sourceType:"웹",sourceUrl:"https://www.mico.kr/en/company/history.php"},
+      {year:"2025",model:"Q150 + 첫 100% 국산 SOFC 사업 수주",specs:"150 kW급 모델, 한국 첫 100% 국산 SOFC 발전사업 낙찰",performance:"발전용 SOFC 국내 인증",sourceType:"웹",sourceUrl:"https://www.linkedin.com/posts/mico-limited_mico-micopower-mico-activity-7358723545150996480-oxSy"},
+      {year:"2026-02",model:"Meritz 400억 투자 집행 완료 + 평택 100 MW",specs:"2026-02-25 Meritz증권+AFWP 공동 신기술사업투자조합으로 400억 원 집행(Meritz의 2026년 첫 모험자본 투자). 평택 브레인시티 33,057 m² 2026 초 30 MW → 100 MW 단계 확장, 장기 1 GW",performance:"국책 100 kW SOEC: 2027 상반기 시범운전 예정",sourceType:"웹",sourceUrl:"https://en.sedaily.com/news/2026/02/25/meritz-securities-invests-40-billion-won-in-hydrogen-fuel"}
+    ]}
+];
+
+// 히스토리 렌더링
+function renderHistory() {
+  const tabsEl = document.getElementById('historyTabs');
+  const contentEl = document.getElementById('historyContent');
+
+  HISTORY_DATA.forEach((mfr, idx) => {
+    // Tab
+    const btn = document.createElement('button');
+    btn.className = 'hist-tab' + (idx === 0 ? ' active' : '');
+    btn.dataset.mfr = mfr.id;
+    btn.textContent = mfr.name;
+    btn.onclick = () => {
+      document.querySelectorAll('.hist-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.hist-panel').forEach(p => {
+        p.classList.toggle('hidden', p.dataset.mfr !== mfr.id);
+      });
+      window.scrollTo({ top: document.getElementById('history').offsetTop - 80, behavior: 'smooth' });
+    };
+    tabsEl.appendChild(btn);
+
+    // Panel
+    const panel = document.createElement('div');
+    panel.className = 'hist-panel' + (idx === 0 ? '' : ' hidden');
+    panel.dataset.mfr = mfr.id;
+
+    const photoUrl = LATEST_PHOTOS[mfr.id] || '';
+    const photoHtml = photoUrl
+      ? `<img src="${photoUrl}" alt="${mfr.name} latest stack" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"><div class="ph" style="display:none;">📦</div>`
+      : `<div class="ph" style="display:flex;">📦</div>`;
+
+    const milestonesHtml = mfr.milestones.map(m => `
+      <div class="ms-item">
+        <div class="ms-year">${m.year}</div>
+        <div class="ms-card">
+          <h4>${m.model}</h4>
+          <p class="specs">${m.specs}</p>
+          ${m.performance ? `<span class="perf">${m.performance}</span>` : ''}
+          <br>
+          <a class="src" href="${m.sourceUrl}" target="_blank" rel="noopener">
+            ${m.sourceType === '논문' ? '📄' : m.sourceType === '특허' ? '⚖' : '🌐'} ${m.sourceType} 출처 →
+          </a>
+        </div>
+      </div>
+    `).join('');
+
+    panel.innerHTML = `
+      <div class="hist-hero">
+        <div class="hist-hero-img">${photoHtml}</div>
+        <div class="hist-hero-info">
+          <h3>${mfr.name} ${mfr.country}</h3>
+          <span class="latest-tag">최신 스택</span>
+          <div class="latest-model">${mfr.latestModel}</div>
+          <div class="latest-perf">${mfr.latestPerf}</div>
+        </div>
+      </div>
+      <div class="timeline">${milestonesHtml}</div>
+    `;
+    contentEl.appendChild(panel);
+  });
+}
+
+renderHistory();
+
+// ===== 카드 클릭 → 회사 공식 홈페이지 (새 탭) =====
+const COMPANY_URL_MAP = [
+  ["Bloom Energy",       "https://www.bloomenergy.com"],
+  ["Topsoe",             "https://www.topsoe.com"],
+  ["Sunfire",            "https://www.sunfire.de/en"],
+  ["Elcogen",            "https://elcogen.com"],
+  ["Ceres Power",        "https://www.ceres.tech"],
+  ["SolydEra",           "https://www.solydera.com"],
+  ["Convion",            "https://convion.fi"],
+  ["FuelCell Energy",    "https://www.fuelcellenergy.com"],
+  ["OxEon",              "https://oxeonenergy.com"],
+  ["Versa Power",        "https://www.fuelcellenergy.com"],
+  ["Huatsing",           "http://en.huatsing-power.com"],
+  ["华清京昆",            "http://en.huatsing-power.com"],
+  ["CCTC",               "https://www.cctc.cc/en/"],
+  ["潮州三环",            "https://www.cctc.cc/en/"],
+  ["REFIRE",             "https://en.refire.com"],
+  ["重塑",                "https://en.refire.com"],
+  ["SPIC",               "http://eng.spic.com.cn"],
+  ["国家电投",            "http://eng.spic.com.cn"],
+  ["Weichai",            "https://en.weichaipower.com"],
+  ["潍柴",                "https://en.weichaipower.com"],
+  ["Sinopec",            "http://www.sinopec.com/listco/en/"],
+  ["中国石化",            "http://www.sinopec.com/listco/en/"],
+  ["두산퓨얼셀",          "https://www.doosanfuelcell.com"],
+  ["미코파워",            "https://www.micopower.com"],
+  ["포스코",              "https://www.poscoholdings.com"],
+  ["엔포러스",            "https://www.poscoholdings.com"],
+  ["KIER",               "https://www.kier.re.kr/eng/"],
+  ["범한퓨얼셀",          "http://www.bumhanfuelcell.com"],
+  ["SK에코플랜트",        "https://www.skecoplant.com"]
+];
+
+function lookupCompanyUrl(headingText) {
+  if (!headingText) return null;
+  for (const [keyword, url] of COMPANY_URL_MAP) {
+    if (headingText.indexOf(keyword) !== -1) return url;
+  }
+  return null;
+}
+
+document.querySelectorAll('.rank-card, .mfr-card').forEach(card => {
+  const h3 = card.querySelector('h3');
+  if (!h3) return;
+  const url = lookupCompanyUrl(h3.textContent);
+  if (!url) return;
+  card.dataset.url = url;
+  card.setAttribute('title', '클릭하면 ' + h3.textContent.trim() + ' 공식 홈페이지로 이동');
+  card.addEventListener('click', (e) => {
+    if (e.target.closest('a')) return;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  });
+});
+</script>
+
+</body>
+</html>
