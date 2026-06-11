@@ -355,6 +355,29 @@ nav .links a:hover { opacity: 1; }
 .comparison { background: #000; color: #fff; padding: 100px 0; }
 .comparison .section-header h2 { color: #fff; }
 .comparison .section-header p { color: #a1a1a6; }
+
+/* Market Outlook */
+.market-cards {
+  max-width: 1300px; margin: 0 auto 40px; padding: 0 24px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;
+}
+.market-card {
+  background: #1c1c1e; border: 1px solid #2c2c2e; border-radius: 18px; padding: 28px 24px;
+}
+.market-card .mk-head { font-size: 12.5px; color: #a1a1a6; letter-spacing: 0.04em; text-transform: uppercase; }
+.market-card .mk-num {
+  font-size: 25px; font-weight: 700; letter-spacing: -0.02em; margin-top: 8px;
+  background: linear-gradient(135deg, #0071e3, #af52de);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+.market-card .mk-sub { font-size: 13px; color: #d2d2d7; margin-top: 12px; line-height: 1.55; }
+.market-card .mk-src { font-size: 11px; color: #6e6e73; margin-top: 12px; }
+.mk-h3 { max-width: 1300px; margin: 56px auto 14px; padding: 0 24px; font-size: 19px; font-weight: 600; color: #fff; }
+.mk-cap { max-width: 1300px; margin: 12px auto 0; padding: 0 24px; font-size: 12.5px; color: #a1a1a6; line-height: 1.55; }
+.market-note {
+  max-width: 1300px; margin: 48px auto 0; padding: 16px 24px; font-size: 12.5px; color: #a1a1a6;
+  border-left: 3px solid #0071e3; line-height: 1.65;
+}
 .table-wrap { max-width: 1300px; margin: 0 auto; padding: 0 24px; overflow-x: auto; }
 .table-wrap table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .table-wrap th {
@@ -437,6 +460,7 @@ footer a { color: var(--accent); text-decoration: none; }
       <a href="#manufacturers">제조사</a>
       <a href="#sofc-comparison">SOFC</a>
       <a href="#soec-comparison">SOEC</a>
+      <a href="#market">시장 전망</a>
       <a href="#history">개발 히스토리</a>
     </div>
   </div>
@@ -1645,6 +1669,120 @@ footer a { color: var(--accent); text-decoration: none; }
   </div>
 </section>
 
+<!-- ============ 시장 전망 (Market Outlook) ============ -->
+<section class="comparison" id="market">
+  <div class="section-header">
+    <h2>시장 전망</h2>
+    <p>SOFC·SOEC 시장 규모 · 수요 · 수소 생산원가 · 정책 — 공개 기관 출처 종합 (2026-06-11)</p>
+  </div>
+
+  <div class="market-cards">
+    <div class="market-card">
+      <div class="mk-head">SOFC 시장 규모 (추정)</div>
+      <div class="mk-num">$3B → $9.6~12.3B</div>
+      <div class="mk-sub">2025 → 2030 · CAGR 24~31% · 2035년 $22~24B 전망. 데이터센터·AI 전력이 최고 성장 세그먼트.</div>
+      <div class="mk-src">MarketsandMarkets 2025 · Research Nester 등 (기관 추정 범위)</div>
+    </div>
+    <div class="market-card">
+      <div class="mk-head">SOEC 시장 규모 (추정)</div>
+      <div class="mk-num">$0.4~0.65B → $22.6B</div>
+      <div class="mk-sub">2025 → 2035 · CAGR ~48.7%. 단, 2030년 추정은 시장 정의차(셀·스택 vs 시스템+P2X)로 기관 간 8배 산포 — 절대값보다 성장 궤적 참고.</div>
+      <div class="mk-src">BIS Research 2026 · Verified MR · Knowledge Sourcing</div>
+    </div>
+    <div class="market-card">
+      <div class="mk-head">전해조 전체 맥락 (IEA 확인)</div>
+      <div class="mk-num">2 GW · 38→186 GW/yr</div>
+      <div class="mk-sub">전 세계 수전해 설치 2 GW(2024) · 제조능력 38→186 GW/yr(2024→2030) · 중국 점유 설치+FID 65%. SOEC는 점유 ~10.8%로 소수이나 성장률 최고.</div>
+      <div class="mk-src">IEA Global Hydrogen Review 2024/2025</div>
+    </div>
+    <div class="market-card">
+      <div class="mk-head">데이터센터 수요 (SOFC)</div>
+      <div class="mk-num">4.2 GW+ 약정·파이프라인</div>
+      <div class="mk-sub">Oracle 최대 2.8 GW · AEP 최대 1 GW · Nebius 328 MW · Equinix &gt;100 MW. Bloom backlog $20B(2025년 말). 단 가동(installed)은 ~0.08 GW — 설치 전환은 초기.</div>
+      <div class="mk-src">Bloom/Oracle MSA · Utility Dive · 기업 발표 (확인·약정)</div>
+    </div>
+  </div>
+
+  <h3 class="mk-h3">시장 규모 전망 — 기관 추정 범위 (USD B)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>기술</th><th>2025</th><th>2030 (범위)</th><th>2035 (범위)</th></tr></thead>
+      <tbody>
+        <tr><td>SOFC</td><td>3.0 (2.98~3.2)</td><td>11.6 (9.6~12.25)</td><td>23.2 (22.46~23.93)</td></tr>
+        <tr><td>SOEC</td><td>0.5 (0.42~0.65)</td><td>3.0 (0.65~5.37)</td><td>22.55 (단일 출처)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="mk-cap">기관 추정 범위 병기 — SOEC 2030의 넓은 범위는 시장 정의(셀·스택 vs 시스템 통합) 차이. SOEC 2030 중심값은 BIS 성장 궤적 보간값. 전량 추정 라벨.</p>
+
+  <h3 class="mk-h3">성장 전망 대역 — 보수 · 기준 · 낙관 (USD B)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>기술</th><th>시나리오</th><th>2025</th><th>2030</th><th>2035</th><th>간략 가정</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="3">SOFC</td><td>보수</td><td>3.0</td><td>9.6</td><td>16.8</td><td>데이터센터 설치 전환 지연 · 저성장 CAGR(~12%) 연장</td></tr>
+        <tr><td>기준</td><td>3.0</td><td>11.6</td><td>23.2</td><td>주요 기관 중심 전망(CAGR 24~31%) 유지</td></tr>
+        <tr><td>낙관</td><td>3.0</td><td>12.3</td><td>34.7</td><td>고성장 기관 계열(CAGR ~32%) · 2035는 2034 전망값 준용</td></tr>
+        <tr><td rowspan="3">SOEC</td><td>보수</td><td>0.5</td><td>0.75</td><td>2.3</td><td>보조정책 축소·FID 지연 · 2030 기관 하한 + CAGR 하한 25.6% 연장</td></tr>
+        <tr><td>기준</td><td>0.5</td><td>3.0</td><td>22.6</td><td>최다 인용 BIS 궤적(CAGR 48.7%)</td></tr>
+        <tr><td>낙관</td><td>0.5</td><td>5.4</td><td>39</td><td>정책 가속·광의 정의 · CAGR 상한 59.7%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="mk-cap">3 대역은 공개 기관 전망의 상·하한 CAGR에서 유도한 참고용 시나리오 — SOFC 대역폭은 좁고(수요 가시성), SOEC 대역폭은 넓다(정책·기술 불확실성).</p>
+
+  <h3 class="mk-h3">수소 생산원가 LCOH — 기술 비교 (USD/kg H₂, 보조금 전 TEA 종합·추정)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>기술/조건</th><th>LCOH 범위</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>알칼라인 (AWE)</td><td>4.1~7.6</td><td>TEA 종합</td></tr>
+        <tr><td>PEM</td><td>4.5~8.6</td><td>TEA 종합</td></tr>
+        <tr><td>SOEC (전기가열)</td><td>6.1~10.2</td><td>현재 데모 CapEx 반영 시 최고</td></tr>
+        <tr><td>SOEC (산업 폐열 통합)</td><td><strong>7.16</strong></td><td>동일 비교군 내 최저 (AWE 7.6 · PEM 8.6 대비)</td></tr>
+        <tr><td>미국 45V 적용 후 (전해 일반)</td><td>2~4 (저가 PPA 시 ~1.7)</td><td>회색수소 1~2 $/kg와 경쟁권</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="mk-cap">SOEC는 전력소비 35~40 kWh/kg(스택 기준; 시스템 평균 ~45 kWh/kg, AWE/PEM 50~55 대비)의 효율 우위로 산업 폐열 결합 시 비교군 최저 LCOH 가능(추정). 미국 45V($3/kg)는 OBBBA로 착공기한이 2027년 말로 단축(확인).</p>
+
+  <h3 class="mk-h3">수요 세그먼트 — 확실성 등급별 (GW)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>세그먼트</th><th>installed</th><th>committed</th><th>MOU·옵션</th><th>비고</th></tr></thead>
+      <tbody>
+        <tr><td>데이터센터·AI (SOFC)</td><td>0.08</td><td>1.7</td><td>2.5</td><td>Oracle·AEP·Nebius·Equinix (확인)</td></tr>
+        <tr><td>그린수소·e-fuel (SOEC)</td><td>0.007</td><td>0.12</td><td>0.06</td><td>installed = Neste 2.6 MW 상업 + NASA 4 MW 데모 · First Ammonia 5 GW 예약은 2026-03 취소</td></tr>
+        <tr><td>분산·발전용 (SOFC)</td><td>0.40</td><td>—</td><td>—</td><td>Bloom×SK ecoplant 누적(발전용 SOFC) · 일본 ENE-FARM &gt;40만 대(대수 기준) 별도</td></tr>
+        <tr><td>산업 탈탄소 (SOEC)</td><td>—</td><td>—</td><td>미정량</td><td>GW급 잠재 (제철 등 MOU·설계 단계)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="mk-cap">수요 확실성은 installed &gt; committed &gt; MOU 순 — 데이터센터가 약정 물량을 지배하고, SOEC 연료는 EU 의무수요(ReFuelEU·RED III) 발효로 2030 전후 수요 점프가 예상된다.</p>
+
+  <h3 class="mk-h3">정책 타임라인 (2025~2030)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>시기</th><th>사건</th><th>방향</th><th>라벨</th></tr></thead>
+      <tbody>
+        <tr><td>2025-01</td><td>美 45V 최종규칙 발효 (최대 $3/kg)</td><td>+</td><td>확인</td></tr>
+        <tr><td>2025-05/12</td><td>EU Hydrogen Bank 2차 €992M · 3차 €1B+ 경매</td><td>+</td><td>확인</td></tr>
+        <tr><td>2025-07</td><td>美 OBBBA — 45V 착공기한 2032→2027-12-31 단축</td><td>−</td><td>확인</td></tr>
+        <tr><td>2025-10</td><td>美 DOE 수소허브 $7.5B+ 취소</td><td>−</td><td>확인</td></tr>
+        <tr><td>2025-10</td><td>韓 CHPS 2025년 입찰 전격 취소</td><td>−</td><td>확인</td></tr>
+        <tr><td>2025-10</td><td>日 ¥3T 수소 CfD 1차 선정 (~$6.8B/15년)</td><td>+</td><td>확인</td></tr>
+        <tr><td>2026</td><td>EU CBAM 본격 시행 예정</td><td>+</td><td>2차</td></tr>
+        <tr><td>2030</td><td>EU ReFuelEU e-SAF 1.2% · RED III RFNBO 42% 의무 개시</td><td>+</td><td>확인(법규)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="mk-cap">2025~26년은 미국·한국의 정책 후퇴와 EU·일본의 가속이 동시 진행 — 지역별로 시장 동인이 갈린다.</p>
+
+  <div class="market-note">
+    시장 규모($)는 시장조사기관 보도자료 기반 추정치로 기관·정의(시스템/스택, 연간/누적)에 따라 큰 산포가 있으며, 물량(GW)·정책·계약 수치는 IEA·정부·기업 공식 발표(확인)를 우선 인용했습니다. 전망 대역은 공개 기관 전망의 상·하한에서 유도한 참고용 시나리오입니다. (갱신: 2026-06-11)
+  </div>
+</section>
+
 <!-- ============ 제조사별 개발 히스토리 (맨 아래) ============ -->
 <div class="section-header" id="history">
   <h2>제조사별 개발 히스토리</h2>
@@ -1660,6 +1798,7 @@ footer a { color: var(--accent); text-decoration: none; }
   <p>Generated by Claude Code AI Agent · Apple-style Dashboard</p>
   <p style="margin-top: 8px;">Data sources: 25 manufacturer official sites + manufacturing capacity press releases</p>
   <p style="margin-top: 8px;">추적 제조사 25사 = history.json 등재 25사 (핵심 9 + 신규 발굴 14 + v3 신규 2: 삼성전기·범한퓨얼셀)</p>
+  <p style="margin-top: 8px;">시장 전망 출처: IEA Global Hydrogen Review 2024/2025 · 시장조사기관 보도자료(MarketsandMarkets·BIS Research 등) · DOE/EU/기업 공식 발표</p>
   <p style="margin-top: 16px;">Last updated <strong>2026-06-11</strong> · v3 갱신(Bloom×Nebius $2.6B 美 · Ceres £103M 조달 · FuelCell 파이프라인 4GW · MHI SOEC+FT SAF · Denso/JERA 화력 SOEC · Doosan 하이창원 9MW·한수원 MT-SOFC · 신규 2사) 완료 · Auto-update every Monday</p>
 </footer>
 
