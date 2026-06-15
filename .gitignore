@@ -9,3 +9,6 @@ Thumbs.db
 # Backup
 *.bak
 *~
+
+# Claude/OMC session state (never publish)
+.omc/
